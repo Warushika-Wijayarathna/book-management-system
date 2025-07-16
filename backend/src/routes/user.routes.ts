@@ -1,6 +1,6 @@
-import {Router} from "express";
-import {authenticateToken} from "../middlewares/authenticateToken";
-import {getUser, updateUser} from "../controllers/user.controller";
+import {Router} from "express"
+import {authenticateToken} from "../middlewares/authenticateToken"
+import {getUser, updateUser} from "../controllers/user.controller"
 
 export const userRouter = Router()
 

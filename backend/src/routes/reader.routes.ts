@@ -1,6 +1,6 @@
-import {Router} from "express";
-import {createReader, deleteReader, getReaderById, getReaders} from "../controllers/reader.controller";
-import {authenticateToken} from "../middlewares/authenticateToken";
+import {Router} from "express"
+import {createReader, deleteReader, getReaderById, getReaders} from "../controllers/reader.controller"
+import {authenticateToken} from "../middlewares/authenticateToken"
 
 const readerRouter =  Router()
 // add authenticateToken middleware to all routes

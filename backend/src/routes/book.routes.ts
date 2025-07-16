@@ -1,6 +1,6 @@
-import {Router} from "express";
-import {createBook, deleteBook, getBookById, getBooks, updateBook} from "../controllers/book.controller";
-import {authenticateToken} from "../middlewares/authenticateToken";
+import {Router} from "express"
+import {createBook, deleteBook, getBookById, getBooks, updateBook} from "../controllers/book.controller"
+import {authenticateToken} from "../middlewares/authenticateToken"
 
 const bookRouter = Router()
 
