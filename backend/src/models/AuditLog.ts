@@ -32,4 +32,6 @@ const auditLogSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-});
+})
+
+export const AuditLogModel = mongoose.model<AuditLog>("AuditLogs", auditLogSchema)

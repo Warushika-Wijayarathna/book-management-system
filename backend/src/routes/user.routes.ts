@@ -9,4 +9,4 @@ userRouter.use(authenticateToken)
 userRouter.get("/", getUser)
 userRouter.put("/:id", updateUser)
 
-export default userRouter;
+export default userRouter

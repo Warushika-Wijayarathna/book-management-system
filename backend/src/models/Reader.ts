@@ -42,6 +42,6 @@ const readerSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-});
+})
 
-export const ReaderModel = mongoose.model<Reader>("Readers", readerSchema);
+export const ReaderModel = mongoose.model<Reader>("Readers", readerSchema)

@@ -24,7 +24,7 @@ app.use(cors(corsOperations));
 
 app.use(express.json());
 // handling JSON requests
-app.use(cookieParser());
+app.use(cookieParser())
 
 // calling api endpoints
 app.use("/api", rootRouter)
@@ -34,6 +34,6 @@ app.use(errorHandler)
 // connects MongoDB to the app
 connectDB().then(() => {
   app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`)
   });
 })

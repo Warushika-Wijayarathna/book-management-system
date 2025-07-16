@@ -37,6 +37,6 @@ const lendingSchema = new mongoose.Schema({
         enum: ["borrowed", "returned", "overdue"],
         default: "borrowed"
     }
-});
+})
 
-export const LendingModel = mongoose.model<Lending>("Lendings", lendingSchema);
+export const LendingModel = mongoose.model<Lending>("Lendings", lendingSchema)

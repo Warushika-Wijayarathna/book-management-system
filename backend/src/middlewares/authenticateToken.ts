@@ -26,10 +26,10 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
                 throw new APIError(403, "Invalid token payload")
             }
 
-            next();
+            next()
         })
 
     } catch (error) {
-        next(error);
+        next(error)
     }
 }

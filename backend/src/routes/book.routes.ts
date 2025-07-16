@@ -10,8 +10,8 @@ bookRouter.use(authenticateToken);
 bookRouter.post("/", createBook)
 bookRouter.get("/", getBooks)
 bookRouter.get("/:id", getBookById)
-bookRouter.delete("/:id", deleteBook);
-bookRouter.put("/:id", updateBook);
+bookRouter.delete("/:id", deleteBook)
+bookRouter.put("/:id", updateBook)
 
-export default bookRouter;
+export default bookRouter
 

@@ -52,6 +52,6 @@ const bookSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-});
+})
 
-export const BookModel = mongoose.model<Book>("Books", bookSchema);
+export const BookModel = mongoose.model<Book>("Books", bookSchema)
