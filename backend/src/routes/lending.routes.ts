@@ -15,4 +15,4 @@ lendingRouter.get("/", getAllLendings)
 lendingRouter.get("/reader/:readerId", getLendingsByReader)
 lendingRouter.get("/book/:bookId", getLendingsByBook)
 
-export default lendingRouter;
+export default lendingRouter

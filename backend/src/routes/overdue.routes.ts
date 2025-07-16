@@ -1,5 +1,5 @@
 import {Router} from "express"
-import {getOverdueByReader, getOverdueReaders} from "../controllers/overdue.controller";
+import {getOverdueByReader, getOverdueReaders} from "../controllers/overdue.controller"
 
 export const overdueRouter = Router()
 

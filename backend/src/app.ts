@@ -1,14 +1,14 @@
-import express, {Request, Response} from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import rootRouter from "./routes";
-import {errorHandler} from "./middlewares/errorHandler";
-import {connectDB} from "./db/mongo";
+import express, {Request, Response} from 'express'
+import dotenv from 'dotenv'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import rootRouter from "./routes"
+import {errorHandler} from "./middlewares/errorHandler"
+import {connectDB} from "./db/mongo"
 
 const app = express()
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000
 
 dotenv.config()
 
@@ -20,9 +20,9 @@ const corsOperations = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 }
 
-app.use(cors(corsOperations));
+app.use(cors(corsOperations))
 
-app.use(express.json());
+app.use(express.json())
 // handling JSON requests
 app.use(cookieParser())
 
@@ -35,5 +35,5 @@ app.use(errorHandler)
 connectDB().then(() => {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
-  });
+  })
 })
