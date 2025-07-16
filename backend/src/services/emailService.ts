@@ -1,39 +1,45 @@
-import sgMail from "@sendgrid/mail"
+import nodemailer from "nodemailer"
 import { LendingModel } from "../models/Lending"
 import { ReaderModel } from "../models/Reader"
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+})
 
-export const sendOverdueNotification = async (readerId: string): Promise<void> => {
+export const sendOverdueNotification = async (readerId: string) => {
     const reader = await ReaderModel.findById(readerId)
     if (!reader || !reader.email) return
 
     const today = new Date()
-    const overdueBooks = await LendingModel.find({
+    const overdueLendings = await LendingModel.find({
         readerId,
         dueDate: { $lt: today },
-        status: "borrowed"
+        status: "borrowed",
     }).populate("bookId")
 
-    if (!overdueBooks.length) return
+    if (!overdueLendings.length) return
 
-    const bookList = overdueBooks.map((l: any) => {
+    const bookList = overdueLendings.map((l: any) => {
         const book = l.bookId
-        return `<li><strong>${book.title}</strong> (Due: ${new Date(l.dueDate).toDateString()})</li>`
+        return `<li>${book.title} (Due: ${new Date(l.dueDate).toDateString()})</li>`
     }).join("")
 
-    const emailBody = `
-    <h3>Dear ${reader.name},</h3>
-    <p>You have the following overdue books:</p>
+    const emailHTML = `
+    <p>Dear ${reader.name},</p>
+    <p>You have the following <strong>overdue books</strong>:</p>
     <ul>${bookList}</ul>
-    <p>Please return them as soon as possible to avoid penalties.</p>
+    <p>Please return them to avoid penalties.</p>
     <p>– Book Club Library</p>
   `
 
-    await sgMail.send({
-        to: reader.email,
+    await transporter.sendMail({
         from: process.env.EMAIL_FROM!,
-        subject: "Overdue Books Reminder – Book Club",
-        html: emailBody,
+        to: reader.email,
+        subject: "⏰ Overdue Book Reminder",
+        html: emailHTML,
     })
 }
