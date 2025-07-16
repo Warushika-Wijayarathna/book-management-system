@@ -6,8 +6,12 @@ import {
     lendBook,
     returnBook
 } from "../controllers/lending.controller"
+import {authenticateToken} from "../middlewares/authenticateToken";
 
 const lendingRouter = Router()
+
+// add authenticateToken middleware to all routes
+lendingRouter.use(authenticateToken)
 
 lendingRouter.post("/", lendBook)
 lendingRouter.put("/return/:id", returnBook)
