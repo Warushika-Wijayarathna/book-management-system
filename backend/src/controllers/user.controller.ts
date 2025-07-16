@@ -1,6 +1,6 @@
-import {NextFunction, Request, Response} from "express";
-import {UserModel} from "../models/User";
-import {APIError} from "../errors/APIError";
+import {NextFunction, Request, Response} from "express"
+import {UserModel} from "../models/User"
+import {APIError} from "../errors/APIError"
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -10,19 +10,19 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
             { new: true }
         );
         if (!user) {
-            throw new APIError(404, "User not found");
+            throw new APIError(404, "User not found")
         }
-        res.status(200).json(user);
+        res.status(200).json(user)
     } catch (error: any) {
-        next(error);
+        next(error)
     }
 }
 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = await UserModel.find();
-        res.status(200).json(users);
+        const users = await UserModel.find()
+        res.status(200).json(users)
     } catch (error: any) {
-        next(error);
+        next(error)
     }
 };

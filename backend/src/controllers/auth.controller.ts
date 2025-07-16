@@ -1,8 +1,8 @@
-import jwt, {JsonWebTokenError, JwtPayload, TokenExpiredError} from "jsonwebtoken";
-import {NextFunction, Request, Response} from "express";
-import {UserModel} from "../models/User";
-import bcrypt from "bcrypt";
-import {APIError} from "../errors/APIError";
+import jwt, {JsonWebTokenError, JwtPayload, TokenExpiredError} from "jsonwebtoken"
+import {NextFunction, Request, Response} from "express"
+import {UserModel} from "../models/User"
+import bcrypt from "bcrypt"
+import {APIError} from "../errors/APIError"
 
 const createAccessToken = (userId: string): string => {
     return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET!, {
@@ -21,7 +21,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
         const { name, email, password } = req.body
 
         const SALT = 10
-        const hashedPassword = await bcrypt.hash(password, SALT);
+        const hashedPassword = await bcrypt.hash(password, SALT)
         const user = new UserModel({
             name,
             email,

@@ -1,14 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 type Book = {
-    title: string;
-    author: string;
-    isbn: string;
-    publishedYear: number;
-    category: string;
-    totalCopies: number;
-    availableCopies: number;
-    addedDate: Date;
+    title: string
+    author: string
+    isbn: string
+    publishedYear: number
+    category: string
+    totalCopies: number
+    availableCopies: number
+    addedDate: Date
 }
 
 const bookSchema = new mongoose.Schema({

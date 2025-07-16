@@ -1,11 +1,11 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { Types } from "mongoose"
 
 type AuditLog = {
-    action: string;
-    performedBy: Types.ObjectId;
-    targetModel: string;
-    targetId: Types.ObjectId;
-    timestamp: Date;
+    action: string
+    performedBy: Types.ObjectId
+    targetModel: string
+    targetId: Types.ObjectId
+    timestamp: Date
 }
 
 const auditLogSchema = new mongoose.Schema({

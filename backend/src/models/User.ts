@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 type User = {
-    name: string;
-    email: string;
-    password: string;
+    name: string
+    email: string
+    password: string
 }
 
 const userSchema = new mongoose.Schema({

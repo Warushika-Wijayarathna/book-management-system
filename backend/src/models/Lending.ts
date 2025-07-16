@@ -1,12 +1,12 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { Types } from "mongoose"
 
 type Lending = {
-    readerId: Types.ObjectId;
-    bookId: Types.ObjectId;
-    borrowedDate: Date;
-    dueDate: Date;
-    returnedDate?: Date;
-    status: "borrowed" | "returned" | "overdue";
+    readerId: Types.ObjectId
+    bookId: Types.ObjectId
+    borrowedDate: Date
+    dueDate: Date
+    returnedDate?: Date
+    status: "borrowed" | "returned" | "overdue"
 }
 
 const lendingSchema = new mongoose.Schema({

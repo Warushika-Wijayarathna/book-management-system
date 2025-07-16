@@ -1,6 +1,6 @@
-import jwt, {JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
-import {NextFunction, Request, Response} from "express";
-import {APIError} from "../errors/APIError";
+import jwt, {JsonWebTokenError, TokenExpiredError } from "jsonwebtoken"
+import {NextFunction, Request, Response} from "express"
+import {APIError} from "../errors/APIError"
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     try {

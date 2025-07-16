@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 type Reader = {
-    name: string;
-    email?: string;
-    contactNumber: string;
-    address: string;
-    createdAt: Date;
+    name: string
+    email?: string
+    contactNumber: string
+    address: string
+    createdAt: Date
 }
 
 const readerSchema = new mongoose.Schema({
