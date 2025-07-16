@@ -1,5 +1,5 @@
 import {Router} from "express"
-import {notifyAllOverdue} from "../controllers/notification.controller";
+import {notifyAllOverdue} from "../controllers/notification.controller"
 
 const notificationRouter = Router()
 
