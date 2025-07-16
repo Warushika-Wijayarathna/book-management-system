@@ -18,7 +18,7 @@ export const createReader = async (req: Request, res: Response, next: NextFuncti
 export const getReaders = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const readers = await ReaderModel.find()
-        res.status(200).json(readers);
+        res.status(200).json(readers)
     } catch (error) {
         next(error)
     }
@@ -30,7 +30,7 @@ export const getReaderById = async (req: Request, res: Response, next: NextFunct
         if (!reader) {
             throw new APIError(404, "Reader not found")
         }
-        res.status(200).json(reader);
+        res.status(200).json(reader)
     } catch (error) {
         next(error)
     }
