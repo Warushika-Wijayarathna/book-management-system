@@ -1,4 +1,4 @@
-import express from "express"
+import {Router} from "express"
 import {
     getAllLendings,
     getLendingsByBook,
@@ -7,7 +7,7 @@ import {
     returnBook
 } from "../controllers/lending.controller"
 
-const lendingRouter = express.Router()
+const lendingRouter = Router()
 
 lendingRouter.post("/", lendBook)
 lendingRouter.put("/return/:id", returnBook)
