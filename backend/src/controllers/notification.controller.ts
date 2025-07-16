@@ -8,7 +8,7 @@ export const notifyAllOverdue = async (_req: Request, res: Response, next: NextF
 
         const overdueLendings = await LendingModel.find({
             dueDate: { $lt: today },
-            status: "borrowed"
+            status: "borrowed",
         })
 
         const uniqueReaderIds = [...new Set(overdueLendings.map(l => l.readerId.toString()))]
@@ -17,7 +17,7 @@ export const notifyAllOverdue = async (_req: Request, res: Response, next: NextF
             await sendOverdueNotification(readerId)
         }
 
-        res.json({ message: `Notifications sent to ${uniqueReaderIds.length} readers.` })
+        res.json({ message: `Email sent to ${uniqueReaderIds.length} overdue reader(s)` })
     } catch (err) {
         next(err)
     }
