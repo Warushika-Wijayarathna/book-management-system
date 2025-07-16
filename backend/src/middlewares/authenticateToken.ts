@@ -2,6 +2,12 @@ import jwt, {JsonWebTokenError, TokenExpiredError } from "jsonwebtoken"
 import {NextFunction, Request, Response} from "express"
 import {APIError} from "../errors/APIError"
 
+declare module "express-serve-static-core" {
+    interface Request {
+        user?: any
+    }
+}
+
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader =  req.headers["authorization"]
@@ -25,6 +31,8 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
             if (!decoded || typeof decoded === "string") {
                 throw new APIError(403, "Invalid token payload")
             }
+
+            req.user = decoded
 
             next()
         })

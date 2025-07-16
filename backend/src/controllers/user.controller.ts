@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express"
 import {UserModel} from "../models/User"
 import {APIError} from "../errors/APIError"
+import {logAction} from "../services/auditLogger"
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -9,6 +10,8 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
             req.body,
             { new: true }
         )
+        await logAction("UPDATE", req.user?.id, "User", req.params.id)
+
         if (!user) {
             throw new APIError(404, "User not found")
         }

@@ -6,7 +6,7 @@ import {
     lendBook,
     returnBook
 } from "../controllers/lending.controller"
-import {authenticateToken} from "../middlewares/authenticateToken";
+import {authenticateToken} from "../middlewares/authenticateToken"
 
 const lendingRouter = Router()
 

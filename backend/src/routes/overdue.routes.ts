@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {getOverdueByReader, getOverdueReaders} from "../controllers/overdue.controller"
-import {authenticateToken} from "../middlewares/authenticateToken";
+import {authenticateToken} from "../middlewares/authenticateToken"
 
 export const overdueRouter = Router()
 

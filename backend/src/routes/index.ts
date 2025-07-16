@@ -6,9 +6,11 @@ import lendingRouter from "./lending.routes"
 import notificationRouter from "./notification.routes"
 import overdueRouter from "./overdue.routes"
 import userRouter from "./user.routes"
+import auditRouter from "./audit.routes"
 
 const rootRouter = Router()
 
+rootRouter.use("/audit", auditRouter)
 rootRouter.use("/auth", authRouter)
 rootRouter.use("/books", bookRouter)
 rootRouter.use("/lendings", lendingRouter)

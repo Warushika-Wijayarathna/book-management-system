@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { LendingModel } from "../models/Lending"
 import { BookModel } from "../models/Book"
 import { APIError } from "../errors/APIError"
+import {logAction} from "../services/auditLogger"
 
 export const lendBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -27,6 +28,9 @@ export const lendBook = async (req: Request, res: Response, next: NextFunction) 
         book.availableCopies -= 1
         await book.save()
 
+        const userId = req.user?.id
+        await logAction("LEND", userId, "Book", bookId)
+
         res.status(201).json({ message: "Book successfully lent", lending })
     } catch (error) {
         next(error)
@@ -48,6 +52,7 @@ export const returnBook = async (req: Request, res: Response, next: NextFunction
         if (book) {
             book.availableCopies += 1
             await book.save()
+            await logAction("RETURN", req.user.id, "Lending", lending._id.toString())
         }
 
         res.json({ message: "Book returned successfully", lending })

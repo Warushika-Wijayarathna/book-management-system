@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {notifyAllOverdue} from "../controllers/notification.controller"
-import {authenticateToken} from "../middlewares/authenticateToken";
+import {authenticateToken} from "../middlewares/authenticateToken"
 
 const notificationRouter = Router()
 
