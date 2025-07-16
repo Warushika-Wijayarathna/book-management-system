@@ -8,7 +8,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
             req.params.id,
             req.body,
             { new: true }
-        );
+        )
         if (!user) {
             throw new APIError(404, "User not found")
         }
@@ -25,4 +25,4 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
     } catch (error: any) {
         next(error)
     }
-};
+}

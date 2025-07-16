@@ -34,11 +34,11 @@ export const getReaderById = async (req: Request, res: Response, next: NextFunct
     } catch (error) {
         next(error)
     }
-};
+}
 
 export const deleteReader = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const reader = await ReaderModel.findByIdAndDelete(req.params.id);
+        const reader = await ReaderModel.findByIdAndDelete(req.params.id)
         if (!reader) {
             throw new APIError(404, "Reader not found")
         }
@@ -49,7 +49,7 @@ export const deleteReader = async (req: Request, res: Response, next: NextFuncti
     } catch (error) {
         next(error)
     }
-};
+}
 
 export const updateReader = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -57,7 +57,7 @@ export const updateReader = async (req: Request, res: Response, next: NextFuncti
             req.params.id,
             req.body,
             { new: true }
-        );
+        )
         if (!reader) {
             throw new APIError(404, "Reader not found")
         }
@@ -68,4 +68,4 @@ export const updateReader = async (req: Request, res: Response, next: NextFuncti
     } catch (error) {
         next(error)
     }
-};
+}

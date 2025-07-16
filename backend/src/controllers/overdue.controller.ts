@@ -12,7 +12,7 @@ export const getOverdueReaders = async (req: Request, res: Response, next: NextF
 
         const readerMap = new Map<string, any>()
         overdueLendings.forEach(lending => {
-            const reader = lending.readerId as any;
+            const reader = lending.readerId as any
             if (!readerMap.has(reader._id.toString())) {
                 readerMap.set(reader._id.toString(), {
                     reader,
@@ -32,7 +32,7 @@ export const getOverdueReaders = async (req: Request, res: Response, next: NextF
 
 export const getOverdueByReader = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const readerId = req.params.readerId;
+        const readerId = req.params.readerId
         const today = new Date()
 
         const overdue = await LendingModel.find({

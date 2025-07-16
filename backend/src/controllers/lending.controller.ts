@@ -31,7 +31,7 @@ export const lendBook = async (req: Request, res: Response, next: NextFunction) 
     } catch (error) {
         next(error)
     }
-};
+}
 
 export const returnBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -54,7 +54,7 @@ export const returnBook = async (req: Request, res: Response, next: NextFunction
     } catch (error) {
         next(error)
     }
-};
+}
 
 export const getAllLendings = async (_req: Request, res: Response, next: NextFunction) => {
     try {
@@ -65,7 +65,7 @@ export const getAllLendings = async (_req: Request, res: Response, next: NextFun
     } catch (error) {
         next(error)
     }
-};
+}
 
 export const getLendingsByReader = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -75,7 +75,7 @@ export const getLendingsByReader = async (req: Request, res: Response, next: Nex
     } catch (error) {
         next(error)
     }
-};
+}
 
 export const getLendingsByBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -85,4 +85,4 @@ export const getLendingsByBook = async (req: Request, res: Response, next: NextF
     } catch (error) {
         next(error)
     }
-};
+}

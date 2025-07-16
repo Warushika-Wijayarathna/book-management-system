@@ -19,7 +19,7 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
     } catch (error: any) {
         next(error)
     }
-};
+}
 
 export const getBookById = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -31,7 +31,7 @@ export const getBookById = async (req: Request, res: Response, next: NextFunctio
     } catch (error: any) {
         next(error)
     }
-};
+}
 
 export const deleteBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -43,7 +43,7 @@ export const deleteBook = async (req: Request, res: Response, next: NextFunction
     } catch (error: any) {
         next(error)
     }
-};
+}
 
 export const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
