@@ -25,6 +25,7 @@ export const signUp = async (userData: User): Promise<SignUpResponse> => {
 
 export const login = async (loginData: Omit<User, "name">): Promise<LoginResponse> => {
     const response = await apiClient.post("/auth/login", loginData)
+    console.log("Login response:", response.data)
     return response.data
 }
 

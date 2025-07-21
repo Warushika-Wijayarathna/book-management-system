@@ -8,35 +8,36 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-    const [accessToken, setAccessToken] = useState<string>("")
+    const [accessToken, setAccessToken] = useState<string>(() => localStorage.getItem("accessToken") || "")
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(true)
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
+    const handleToken = (token: string) => {
+        setAccessToken(token)
+        setHeader(token)
+        localStorage.setItem("accessToken", token)
+        setIsAdmin(true)
+    }
+
     const login = (token: string) => {
         setIsLoggedIn(true)
-        setAccessToken(token)
-        try {
-            const decoded: any = jwt_decode(token)
-            setIsAdmin(decoded.role === "admin")
-        } catch {
-            setIsAdmin(false)
-        }
+        handleToken(token)
     }
 
     const logout = () => {
         setIsLoggedIn(false)
         setIsAdmin(false)
+        setAccessToken("")
+        setHeader("")
+        localStorage.removeItem("accessToken")
     }
 
     useEffect(() => {
-        setHeader(accessToken)
         if (accessToken) {
-            try {
-                const decoded: any = jwt_decode(accessToken)
-                setIsAdmin(decoded.role === "admin")
-            } catch {
-                setIsAdmin(false)
-            }
+            handleToken(accessToken)
+            setIsLoggedIn(true)
+        } else {
+            setHeader("")
         }
     }, [accessToken])
 
@@ -52,11 +53,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const tryRefresh = async () => {
             try {
                 const result = await apiClient.post("/auth/refresh-token")
-                setAccessToken(result.data.accessToken)
-                setIsLoggedIn(true)
+                const token = result.data.accessToken
+                login(token)
+                console.log("Token refreshed successfully")
             } catch (error) {
-                setAccessToken("")
-                setIsLoggedIn(false)
+                logout()
             } finally {
                 setIsAuthenticating(false)
             }
@@ -65,5 +66,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         tryRefresh()
     }, [])
 
-    return <AuthContext.Provider value={{ isLoggedIn, login, logout, isAuthenticating, isAdmin }}>{children}</AuthContext.Provider>
+    return (
+        <AuthContext.Provider
+            value={{
+                isLoggedIn,
+                login,
+                logout,
+                isAuthenticating,
+                isAdmin,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    )
 }
