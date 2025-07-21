@@ -1,9 +1,10 @@
 import { createContext } from "react"
 
 export interface AuthContextType {
-    isLoggedIn: boolean;
+    isLoggedIn: boolean
+    isAdmin: boolean
     login: (accessToken: string) => void
-    logout: () => void;
+    logout: () => void
     isAuthenticating: boolean
 }
 

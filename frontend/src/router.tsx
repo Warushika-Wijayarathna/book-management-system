@@ -7,17 +7,20 @@ import NotFound from "./pages/OtherPage/NotFound"
 import UserProfiles from "./pages/UserProfiles"
 import Calendar from "./pages/Calendar"
 import Blank from "./pages/Blank"
+import AdminRoutes from "./pages/AuthPages/AdminRoutes.tsx"
 
 const router = createBrowserRouter([
-  // Auth routes (full screen)
   { path: "/", element: <SignIn /> }, // Default route is full-screen sign-in
   { path: "/signin", element: <SignIn /> },
   { path: "/signup", element: <SignUp /> },
 
-  // Main app routes (with AppLayout)
   {
     path: "",
-    element: <AppLayout />,
+    element: (
+        <AdminRoutes>
+          <AppLayout />
+        </AdminRoutes>
+    ),
     children: [
       { path: "home", element: <Home /> },
       { path: "profile", element: <UserProfiles /> },
