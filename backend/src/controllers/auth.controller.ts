@@ -81,6 +81,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 }
 
 export const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Refreshing token...")
     try {
         const token = req.cookies?.refreshToken
         if (!token) {
