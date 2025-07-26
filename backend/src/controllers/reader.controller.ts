@@ -4,10 +4,16 @@ import {APIError} from "../errors/APIError"
 import {logAction} from "../services/auditLogger"
 
 export const createReader = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Creating reader with data//////////////////////:", req.body, "Request user:", req.user)
     try{
+        console.log("Reader : ", req.body)
         const reader = new ReaderModel(req.body)
         await reader.save()
-        await logAction("CREATE", req.user?.id, "Reader", reader._id.toString())
+        console.log("Reader created successfully:", reader)
+        console.log(" successfully**********:", req.user)
+        const userId = req.user?.userId || "unknown"
+        console.log("User ID from request:", userId)
+        await logAction("CREATE", req.user?.userId, "Reader", reader._id.toString())
         res.status(201).json({
             message: "Reader created successfully",
             reader: reader

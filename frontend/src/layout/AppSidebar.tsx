@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook, faUser, faExchangeAlt, faUserCircle, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 
-// Assume these icons are imported from an icon library
 import {
-  CalenderIcon,
   ChevronDownIcon,
-  GridIcon,
   HorizontaLDots,
-  UserCircleIcon,
-  ListIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -21,32 +18,27 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <GridIcon />,
+    icon: <FontAwesomeIcon icon={faTachometerAlt} />,
     name: "Dashboard",
     path: "/",
   },
   {
-    icon: <ListIcon />,
+    icon: <FontAwesomeIcon icon={faBook} />,
     name: "Books",
     path: "/book"
   },
   {
-    icon: <ListIcon />,
+    icon: <FontAwesomeIcon icon={faUser} />,
     name: "Reader",
     path: "/reader",
   },
   {
-    icon: <ListIcon />,
-    name: "Rent",
-    path: "/rent",
+    icon: <FontAwesomeIcon icon={faExchangeAlt} />,
+    name: "Lend",
+    path: "/lend",
   },
   {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
-  },
-  {
-    icon: <UserCircleIcon />,
+    icon: <FontAwesomeIcon icon={faUserCircle} />,
     name: "User Profile",
     path: "/profile",
   }
