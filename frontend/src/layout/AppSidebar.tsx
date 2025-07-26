@@ -28,7 +28,7 @@ const navItems: NavItem[] = [
   {
     icon: <ListIcon />,
     name: "Books",
-    path: "/books"
+    path: "/book"
   },
   {
     icon: <ListIcon />,

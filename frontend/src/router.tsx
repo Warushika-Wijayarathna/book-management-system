@@ -8,6 +8,7 @@ import UserProfiles from "./pages/UserProfiles"
 import Calendar from "./pages/Calendar"
 import Blank from "./pages/Blank"
 import AdminRoutes from "./pages/AuthPages/AdminRoutes.tsx"
+import BookPage from "./pages/BookPage.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <SignIn /> }, // Default route is full-screen sign-in
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
         </AdminRoutes>
     ),
     children: [
+      {path: "book", element: <BookPage/>},
       { path: "home", element: <Home /> },
       { path: "profile", element: <UserProfiles /> },
       { path: "calendar", element: <Calendar /> },

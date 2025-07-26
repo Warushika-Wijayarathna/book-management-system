@@ -33,6 +33,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     useEffect(() => {
+        // On mount, set the Authorization header if token exists in localStorage
+        const storedToken = localStorage.getItem("accessToken") || "";
+        if (storedToken) {
+            setHeader(storedToken);
+            setIsLoggedIn(true);
+            setAccessToken(storedToken);
+        } else {
+            setHeader("");
+        }
+        // eslint-disable-next-line
+    }, []);
+
+    useEffect(() => {
         if (accessToken) {
             handleToken(accessToken)
             setIsLoggedIn(true)

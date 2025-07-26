@@ -1,13 +1,18 @@
 import { SidebarProvider, useSidebar } from "../context/SidebarContext";
+import { ModalProvider, useModalContext } from "../context/ModalContext";
 import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 
 const LayoutContent: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  const { isModalOpen } = useModalContext();
 
   return (
-    <div className="min-h-screen xl:flex">
+    <div className="min-h-screen xl:flex relative">
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-white bg-opacity-60 z-[99998] pointer-events-none" />
+      )}
       <div>
         <AppSidebar />
       </div>
@@ -28,7 +33,9 @@ const LayoutContent: React.FC = () => {
 const AppLayout: React.FC = () => {
   return (
     <SidebarProvider>
-      <LayoutContent />
+      <ModalProvider>
+        <LayoutContent />
+      </ModalProvider>
     </SidebarProvider>
   );
 };

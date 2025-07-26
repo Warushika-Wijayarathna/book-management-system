@@ -9,6 +9,7 @@ type Book = {
     totalCopies: number
     availableCopies: number
     addedDate: Date
+    imageUrl?: string
 }
 
 const bookSchema = new mongoose.Schema({
@@ -51,6 +52,10 @@ const bookSchema = new mongoose.Schema({
     addedDate: {
         type: Date,
         default: Date.now
+    },
+    imageUrl: {
+        type: String,
+        trim: true
     }
 })
 
