@@ -4,6 +4,7 @@ import {APIError} from "../errors/APIError"
 import {logAction} from "../services/auditLogger"
 
 export const createBook = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Creating book with data:///////////////////////", req.body)
     try {
         if (!req.user || !req.user.userId) {
             return res.status(401).json({ message: "Unauthorized: User not found in request." });
