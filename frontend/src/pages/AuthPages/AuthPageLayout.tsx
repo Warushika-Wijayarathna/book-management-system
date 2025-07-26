@@ -25,7 +25,7 @@ export default function AuthLayout({
                 />
               </Link>
               <p className="text-center text-gray-400 dark:text-white/60">
-                Connecting Readers, Sharing Stories: Your Book Club Community
+                Free and Open-Source Tailwind CSS Admin Dashboard Template
               </p>
             </div>
           </div>

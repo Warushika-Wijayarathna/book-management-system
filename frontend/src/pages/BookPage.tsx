@@ -8,8 +8,6 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import DropzoneComponent from "../components/form/form-elements/DropZone";
 import { useModalContext } from "../context/ModalContext";
 import { toast } from "react-toastify";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function BookPage() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -147,12 +145,8 @@ export default function BookPage() {
                     <p className="text-xs text-gray-500 mb-1">Total: {book.totalCopies} | Available: {book.availableCopies}</p>
                   </div>
                   <div className="mt-3 flex gap-2">
-                    <button className="px-3 py-1 bg-blue-500 text-white rounded flex items-center justify-center" onClick={() => handleEditClick(book)}>
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                    <button className="px-3 py-1 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => handleDeleteClick(book._id)}>
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
+                    <button className="px-3 py-1 bg-blue-500 text-white rounded" onClick={() => handleEditClick(book)}>Edit</button>
+                    <button className="px-3 py-1 bg-red-500 text-white rounded" onClick={() => handleDeleteClick(book._id)}>Delete</button>
                   </div>
                 </div>
             ))}
