@@ -9,6 +9,7 @@ import Blank from "./pages/Blank"
 import AdminRoutes from "./pages/AuthPages/AdminRoutes.tsx"
 import BookPage from "./pages/BookPage.tsx";
 import ReaderPage from "./pages/ReaderPage.tsx";
+import LendPage from "./pages/LendPage.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <SignIn /> }, // Default route is full-screen sign-in
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
     children: [
       { path: "book", element: <BookPage/>},
       { path: "reader", element: <ReaderPage/>},
+      { path: "lend", element: <LendPage/>},
       { path: "home", element: <Home /> },
       { path: "profile", element: <UserProfiles /> },
       { path: "blank", element: <Blank /> },

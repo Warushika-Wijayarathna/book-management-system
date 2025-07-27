@@ -1,5 +1,5 @@
 import {Router} from "express"
-import {createReader, deleteReader, getReaderById, getReaders} from "../controllers/reader.controller"
+import {createReader, deleteReader, getReaderById, getReaders, updateReader} from "../controllers/reader.controller"
 import {authenticateToken} from "../middlewares/authenticateToken"
 
 const readerRouter =  Router()
@@ -11,6 +11,6 @@ readerRouter.post("/", createReader)
 readerRouter.get("/", getReaders)
 readerRouter.get("/:id", getReaderById)
 readerRouter.delete("/:id", deleteReader)
-readerRouter.put("/:id", getReaderById)
+readerRouter.put("/:id", updateReader)
 
 export default readerRouter
