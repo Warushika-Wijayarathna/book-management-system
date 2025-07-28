@@ -10,6 +10,8 @@ import auditRouter from "./audit.routes"
 
 const rootRouter = Router()
 
+console.log(`🛣️  [ROUTES] Setting up root router...`)
+
 rootRouter.use("/audit", auditRouter)
 rootRouter.use("/auth", authRouter)
 rootRouter.use("/books", bookRouter)

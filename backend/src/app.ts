@@ -19,15 +19,22 @@ import express, {Request, Response} from 'express'
     allowedHeaders: ['Content-Type', 'Authorization'],
   }
 
+
   app.use(cors(corsOperations))
+
+  app.use((req, res, next) => {
+    next()
+  })
 
   app.use(express.json())
   app.use(cookieParser())
+
   app.use("/api", rootRouter)
   app.use(errorHandler)
 
   connectDB().then(() => {
+    console.log(`✅ [APP] Database connected successfully`)
     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`)
+      console.log(`🎯 [APP] Server is running on port ${port}`)
     })
   })

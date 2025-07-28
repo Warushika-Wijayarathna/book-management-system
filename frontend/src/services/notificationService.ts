@@ -1,21 +1,19 @@
 import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
-const api = axios.create({
-  baseURL: API_URL,
-});
-
-// Add token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import { BASE_URL } from './apiClient';
 
 export const notifyAllOverdue = async (): Promise<{ message: string }> => {
-  const response = await api.post('/notifications/notify-overdue');
-  return response.data;
+    console.log("notifyAllOverdue called");
+    try {
+        console.log("Making API call to notify overdue readers");
+        const response = await axios.post(`${BASE_URL}/notifications/notify-overdue`, {}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log("API response received:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error notifying overdue:", error);
+        throw error;
+    }
 };

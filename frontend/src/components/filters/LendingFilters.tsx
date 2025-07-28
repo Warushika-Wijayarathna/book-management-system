@@ -163,19 +163,6 @@ export default function LendingFilters({ lendings, onFiltersChange, activeFilter
     return { ...range, count };
   }).filter(option => option.count > 0);
 
-  // Quick filter for overdue items
-  const overdueOptions = [
-    {
-      value: 'show-overdue-only',
-      label: 'Show Overdue Only',
-      count: lendings.filter(lending => {
-        const now = new Date();
-        const dueDate = new Date(lending.dueDate);
-        return dueDate < now && lending.status !== 'returned';
-      }).length
-    }
-  ];
-
   const handleFilterChange = (filterType: keyof LendingFilters, values: string[]) => {
     onFiltersChange({
       ...activeFilters,
@@ -208,17 +195,6 @@ export default function LendingFilters({ lendings, onFiltersChange, activeFilter
         onSelectionChange={(values) => handleFilterChange('borrowedDateRange', values)}
         showCounts={true}
       />
-
-      {overdueOptions[0].count > 0 && (
-        <FilterDropdown
-          title="Quick Filter"
-          options={overdueOptions}
-          selectedValues={activeFilters.overdueOnly}
-          onSelectionChange={(values) => handleFilterChange('overdueOnly', values)}
-          showCounts={true}
-          multiSelect={false}
-        />
-      )}
     </div>
   );
 }

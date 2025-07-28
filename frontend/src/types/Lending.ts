@@ -5,6 +5,5 @@ export interface Lending {
   borrowedDate: string;
   dueDate: string;
   returnedDate?: string;
-  status: "borrowed" | "returned" | "overdue";
+  status: "borrowed" | "returned" | "overdue" | "returnedLate";
 }
-

@@ -1,12 +1,10 @@
 import {Router} from "express"
 import {notifyAllOverdue} from "../controllers/notification.controller"
-import {authenticateToken} from "../middlewares/authenticateToken"
 
 const notificationRouter = Router()
 
-// add authenticateToken middleware to all routes
-notificationRouter.use(authenticateToken)
-
-notificationRouter.post("/", notifyAllOverdue)
+notificationRouter.post("/notify-overdue", (req, res, next) => {
+  notifyAllOverdue(req, res, next)
+})
 
 export default notificationRouter

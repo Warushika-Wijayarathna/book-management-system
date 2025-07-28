@@ -14,8 +14,6 @@ export interface ReaderFilters {
 }
 
 export default function ReaderFilters({ readers, onFiltersChange, activeFilters }: ReaderFiltersProps) {
-  // Generate date ranges for registration
-  const currentDate = new Date();
 
   const dateRanges = [
     { value: 'this-month', label: 'This Month' },
@@ -27,16 +25,13 @@ export default function ReaderFilters({ readers, onFiltersChange, activeFilters 
     { value: 'older', label: 'Older than 1 Year' }
   ];
 
-  // Extract unique locations from addresses (simplified - you might want to parse addresses better)
   const allLocations = Array.from(new Set(
     readers.map(reader => {
-      // Simple extraction of city/location from address
       const addressParts = reader.address?.split(',') || [];
       return addressParts[addressParts.length - 1]?.trim() || 'Unknown';
     }).filter(location => location && location !== 'Unknown')
   )).sort();
 
-  // Activity status options
   const activityOptions = [
     { value: 'recently-active', label: 'Recently Active (< 30 days)' },
     { value: 'moderately-active', label: 'Moderately Active (30-90 days)' },
@@ -44,7 +39,6 @@ export default function ReaderFilters({ readers, onFiltersChange, activeFilters 
     { value: 'new-member', label: 'New Member (< 7 days)' }
   ];
 
-  // Count readers for each filter option
   const dateOptions = dateRanges.map(range => {
     let count = 0;
     const now = new Date();
@@ -106,8 +100,6 @@ export default function ReaderFilters({ readers, onFiltersChange, activeFilters 
     count: readers.filter(reader => reader.address?.includes(location)).length
   }));
 
-  // For activity status, we'll use a simplified approach based on creation date
-  // In a real app, you'd track actual activity (last login, last book borrowed, etc.)
   const activityOptionsWithCount = activityOptions.map(option => {
     let count = 0;
     const now = new Date();

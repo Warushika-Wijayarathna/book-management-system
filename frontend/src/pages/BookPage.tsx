@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
+import BookLendingHistory from "../components/common/BookLendingHistory";
 import { getBooks, addBook, updateBook, deleteBook } from "../services/bookService";
 import { Book, BookFormData } from "../types/Book";
 import { storage } from "../services/firebase";
@@ -67,7 +68,6 @@ export default function BookPage() {
   const applyFilters = () => {
     let filtered = books;
 
-    // Apply search filter first
     if (searchTerm.trim()) {
       const lowercaseSearch = searchTerm.toLowerCase();
       filtered = filtered.filter(book =>
@@ -80,21 +80,18 @@ export default function BookPage() {
       );
     }
 
-    // Apply genre filters
     if (activeFilters.genres.length > 0) {
       filtered = filtered.filter(book =>
         book.genres && book.genres.some(genre => activeFilters.genres.includes(genre))
       );
     }
 
-    // Apply author filters
     if (activeFilters.authors.length > 0) {
       filtered = filtered.filter(book =>
         activeFilters.authors.includes(book.author)
       );
     }
 
-    // Apply year range filters
     if (activeFilters.yearRange.length > 0) {
       filtered = filtered.filter(book => {
         return activeFilters.yearRange.some(range => {
@@ -104,7 +101,6 @@ export default function BookPage() {
       });
     }
 
-    // Apply availability filters
     if (activeFilters.availability.length > 0) {
       filtered = filtered.filter(book => {
         return activeFilters.availability.some(availability => {
@@ -139,7 +135,7 @@ export default function BookPage() {
       author: "",
       isbn: "",
       publishedYear: new Date().getFullYear(),
-      genres: [], // Initialize with empty array for genres
+      genres: [],
       totalCopies: 1,
       availableCopies: 1,
       addedDate: new Date(),
@@ -177,7 +173,6 @@ export default function BookPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle adding a new genre to the genres array
   const handleAddGenre = () => {
     if (!formData) return;
     if (!newGenre.trim()) {
@@ -196,7 +191,6 @@ export default function BookPage() {
     setNewGenre("");
   };
 
-  // Handle removing a genre from the genres array
   const handleRemoveGenre = (genreToRemove: string) => {
     if (!formData) return;
     setFormData({
@@ -205,7 +199,6 @@ export default function BookPage() {
     });
   };
 
-  // Add a genre from suggestions
   const handleAddSuggestedGenre = (genre: string) => {
     if (!formData) return;
     if (formData.genres.includes(genre)) {
@@ -222,7 +215,6 @@ export default function BookPage() {
     e.preventDefault();
     if (!formData) return;
 
-    // Validate required fields
     const requiredFields = ["title", "author", "isbn", "publishedYear"];
     for (const field of requiredFields) {
       if (!formData[field as keyof BookFormData]) {
@@ -231,7 +223,6 @@ export default function BookPage() {
       }
     }
 
-    // Check if at least one genre is provided
     if (!formData.genres || formData.genres.length === 0) {
       toast.error("Please add at least one genre");
       return;
@@ -298,39 +289,47 @@ export default function BookPage() {
           </div>
 
           {/* Book Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBooks.map(book => (
-                <div key={book._id} className="bg-white rounded-xl shadow border p-4 flex flex-col items-center">
-                  {book.imageUrl ? (
-                      <img src={book.imageUrl} alt={book.title} className="w-32 h-40 object-cover rounded mb-3" />
-                  ) : (
-                      <div className="w-32 h-40 bg-gray-200 flex items-center justify-center rounded mb-3 text-gray-500">No Image</div>
-                  )}
-                  <div className="w-full text-center">
-                    <h4 className="font-bold text-lg mb-1">{book.title}</h4>
-                    <p className="text-sm text-gray-600 mb-1">by {book.author}</p>
-                    <p className="text-xs text-gray-500 mb-1">ISBN: {book.isbn}</p>
-                    <p className="text-xs text-gray-500 mb-1">Year: {book.publishedYear}</p>
-                    <div className="flex flex-wrap justify-center gap-1 mb-1">
-                      {book.genres && book.genres.length > 0 ? (
-                        book.genres.map((genre, index) => (
-                          <span key={index} className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                            {genre}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-xs text-gray-400">No genres</span>
-                      )}
+                <div key={book._id} className="bg-white rounded-xl shadow border flex flex-col">
+                  {/* Book Info Section */}
+                  <div className="p-4 flex flex-col items-center">
+                    {book.imageUrl ? (
+                        <img src={book.imageUrl} alt={book.title} className="w-32 h-40 object-cover rounded mb-3" />
+                    ) : (
+                        <div className="w-32 h-40 bg-gray-200 flex items-center justify-center rounded mb-3 text-gray-500">No Image</div>
+                    )}
+                    <div className="w-full text-center">
+                      <h4 className="font-bold text-lg mb-1">{book.title}</h4>
+                      <p className="text-sm text-gray-600 mb-1">by {book.author}</p>
+                      <p className="text-xs text-gray-500 mb-1">ISBN: {book.isbn}</p>
+                      <p className="text-xs text-gray-500 mb-1">Year: {book.publishedYear}</p>
+                      <div className="flex flex-wrap justify-center gap-1 mb-1">
+                        {book.genres && book.genres.length > 0 ? (
+                          book.genres.map((genre, index) => (
+                            <span key={index} className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                              {genre}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-gray-400">No genres</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mb-1">Total: {book.totalCopies} | Available: {book.availableCopies}</p>
                     </div>
-                    <p className="text-xs text-gray-500 mb-1">Total: {book.totalCopies} | Available: {book.availableCopies}</p>
+                    <div className="mt-3 flex gap-2">
+                      <button className="px-3 py-1 bg-blue-500 text-white rounded flex items-center justify-center" onClick={() => handleEditClick(book)}>
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                      <button className="px-3 py-1 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => handleDeleteClick(book._id)}>
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="mt-3 flex gap-2">
-                    <button className="px-3 py-1 bg-blue-500 text-white rounded flex items-center justify-center" onClick={() => handleEditClick(book)}>
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                    <button className="px-3 py-1 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => handleDeleteClick(book._id)}>
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
+
+                  {/* Lending History Section */}
+                  <div className="px-4 pb-4">
+                    <BookLendingHistory bookId={book._id} />
                   </div>
                 </div>
             ))}
