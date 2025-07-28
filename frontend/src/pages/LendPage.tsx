@@ -4,10 +4,11 @@ import PageMeta from "../components/common/PageMeta";
 import { useAuth } from "../context/useAuth";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faSearch, faBell } from "@fortawesome/free-solid-svg-icons";
 import { getBooks } from "../services/bookService";
 import { getReaders, addReader } from "../services/readerService";
 import { getLendings, lendBook, returnBook } from "../services/lendingService";
+import { notifyAllOverdue } from "../services/notificationService";
 import AddReaderForm from "../components/form/AddReaderForm";
 import CustomDialog from "../components/common/CustomDialog";
 import SearchBar from "../components/common/SearchBar";
@@ -38,6 +39,7 @@ export default function LendPage() {
   const [bookSearchValue, setBookSearchValue] = useState("");
   const [readerSearchValue, setReaderSearchValue] = useState("");
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [isNotifying, setIsNotifying] = useState(false);
 
 
   useEffect(() => {
@@ -292,6 +294,36 @@ export default function LendPage() {
     // TODO: Implement filtering logic based on newFilters
   };
 
+  // Helper function to check if overdue filter is active
+  const isOverdueFilterActive = () => {
+    return activeFilters.overdueOnly.includes('show-overdue-only') ||
+           activeFilters.dueDateRange.includes('overdue');
+  };
+
+  // Helper function to get overdue lendings count
+  const getOverdueLendingsCount = () => {
+    const today = new Date();
+    return lendings.filter(lending => {
+      if (!lending.dueDate || lending.status === 'returned') return false;
+      const dueDate = new Date(lending.dueDate);
+      return dueDate < today;
+    }).length;
+  };
+
+  // Handle notify all overdue users
+  const handleNotifyOverdue = async () => {
+    try {
+      setIsNotifying(true);
+      const result = await notifyAllOverdue();
+      toast.success(result.message);
+    } catch (error: any) {
+      console.error('Error sending notifications:', error);
+      toast.error(error?.response?.data?.message || "Failed to send notifications");
+    } finally {
+      setIsNotifying(false);
+    }
+  };
+
   return (
       <div className="px-4 py-6">
         <PageMeta title="Lending Management" description="Manage lendings in the library" />
@@ -324,6 +356,37 @@ export default function LendPage() {
                   onFiltersChange={handleFilterChange}
                 />
               </div>
+
+              {/* Notify Overdue Button - appears when overdue filter is active */}
+              {isOverdueFilterActive() && getOverdueLendingsCount() > 0 && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium text-red-800">
+                        Overdue Books Found
+                      </h3>
+                      <p className="text-sm text-red-600">
+                        {getOverdueLendingsCount()} reader(s) have overdue books. Send email notifications to remind them.
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleNotifyOverdue}
+                      disabled={isNotifying}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        isNotifying
+                          ? 'bg-red-300 text-red-700 cursor-not-allowed'
+                          : 'bg-red-600 text-white hover:bg-red-700'
+                      }`}
+                    >
+                      <FontAwesomeIcon
+                        icon={faBell}
+                        className={isNotifying ? 'animate-pulse' : ''}
+                      />
+                      {isNotifying ? 'Sending...' : 'Notify All'}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <table className="min-w-full text-sm border-collapse">
                 <thead className="bg-gray-100 text-gray-600 text-xs font-semibold">

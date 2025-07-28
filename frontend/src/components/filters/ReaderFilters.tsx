@@ -16,8 +16,6 @@ export interface ReaderFilters {
 export default function ReaderFilters({ readers, onFiltersChange, activeFilters }: ReaderFiltersProps) {
   // Generate date ranges for registration
   const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
 
   const dateRanges = [
     { value: 'this-month', label: 'This Month' },
