@@ -4,27 +4,58 @@ import PageMeta from "../components/common/PageMeta";
 import { getReaders, addReader, updateReader, deleteReader } from "../services/readerService";
 import { Reader, ReaderFormData } from "../types/Reader";
 import { useModalContext } from "../context/ModalContext";
+import { useAuth } from "../context/useAuth";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import SearchBar from "../components/common/SearchBar";
 
 export default function ReaderPage() {
+  const { isLoggedIn, isAuthenticating } = useAuth();
   const [readers, setReaders] = useState<Reader[]>([]);
+  const [filteredReaders, setFilteredReaders] = useState<Reader[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [formData, setFormData] = useState<ReaderFormData | null>(null);
   const [editingReaderId, setEditingReaderId] = useState<string | null>(null);
   const { isModalOpen, setModalOpen } = useModalContext();
 
   useEffect(() => {
-    fetchReaders();
-  }, []);
+    // Only fetch readers if user is authenticated and not currently authenticating
+    if (isLoggedIn && !isAuthenticating) {
+      fetchReaders();
+    }
+  }, [isLoggedIn, isAuthenticating]);
+
+  useEffect(() => {
+    // Filter readers whenever search term changes
+    if (!searchTerm.trim()) {
+      setFilteredReaders(readers);
+    } else {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      setFilteredReaders(readers.filter(reader =>
+        reader.name.toLowerCase().includes(lowercaseSearch) ||
+        reader.email.toLowerCase().includes(lowercaseSearch) ||
+        reader.contactNumber.includes(lowercaseSearch) ||
+        (reader.address && reader.address.toLowerCase().includes(lowercaseSearch))
+      ));
+    }
+  }, [searchTerm, readers]);
 
   const fetchReaders = async () => {
     try {
+      // Debug: Check if authorization header is set
+      console.log('Fetching readers - checking auth token in localStorage:', localStorage.getItem("accessToken"));
       const readers = await getReaders();
       setReaders(readers);
+      setFilteredReaders(readers);
     } catch (error) {
+      console.error('Error fetching readers:', error);
       toast.error("Failed to load readers");
     }
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
   };
 
   const handleAddClick = () => {
@@ -99,6 +130,14 @@ export default function ReaderPage() {
           <h3 className="font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">Readers</h3>
           <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleAddClick}>Add Reader</button>
         </div>
+        {/* Search Bar */}
+        <div className="mb-4">
+          <SearchBar
+            placeholder="Search by name, email, contact number, or address"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
         {/* Reader Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 rounded-xl">
@@ -113,7 +152,7 @@ export default function ReaderPage() {
               </tr>
             </thead>
             <tbody>
-              {readers.map(reader => (
+              {filteredReaders.map(reader => (
                 <tr key={reader._id} className="border-b hover:bg-gray-50">
                   <td className="py-2 px-4">{reader.name}</td>
                   <td className="py-2 px-4">{reader.email}</td>

@@ -1,4 +1,4 @@
-import type { Book, BookFormData } from "../types/Book";
+import type { Book } from "../types/Book";
 import apiClient from "./apiClient";
 
 export const getBooks = async (): Promise<Book[]> => {

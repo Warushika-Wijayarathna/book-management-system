@@ -2,15 +2,18 @@ import { useDropzone } from "react-dropzone";
 import { useState, useEffect } from "react";
 
 interface DropzoneComponentProps {
-    onDrop: (file: File[]) => void;
+    onDrop?: (files: File[]) => void;
+    onFileUploaded?: (file: File) => void;
     accept?: string;
     id?: string;
     reset?: boolean;
+    imageUrl?: string;
 }
 
 const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
-                                                                 onDrop,
-                                                                 reset,
+    onDrop,
+    onFileUploaded,
+    reset,
                                                              }) => {
     const [fileName, setFileName] = useState<string | null>(null);
 
@@ -18,8 +21,14 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({
         onDrop: (acceptedFiles) => {
             if (acceptedFiles.length > 0) {
                 setFileName(acceptedFiles[0].name);
+                // Call the appropriate callback
+                if (onDrop) {
+                    onDrop(acceptedFiles);
+                }
+                if (onFileUploaded) {
+                    onFileUploaded(acceptedFiles[0]);
+                }
             }
-            onDrop(acceptedFiles);
         },
         accept: {
             "image/png": [],

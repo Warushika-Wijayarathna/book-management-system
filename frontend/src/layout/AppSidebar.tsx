@@ -20,7 +20,7 @@ const navItems: NavItem[] = [
   {
     icon: <FontAwesomeIcon icon={faTachometerAlt} />,
     name: "Dashboard",
-    path: "/",
+    path: "/home",
   },
   {
     icon: <FontAwesomeIcon icon={faBook} />,

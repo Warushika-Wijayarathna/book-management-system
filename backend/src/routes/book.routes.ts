@@ -4,7 +4,6 @@ import {authenticateToken} from "../middlewares/authenticateToken"
 
 const bookRouter = Router()
 
-// add authenticateToken middleware to all routes
 bookRouter.use(authenticateToken)
 
 bookRouter.post("/", createBook)

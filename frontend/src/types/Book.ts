@@ -4,7 +4,7 @@ export type Book = {
     author: string
     isbn: string
     publishedYear: number
-    category: string
+    genres: string[]
     totalCopies: number
     availableCopies: number
     addedDate: Date
@@ -16,7 +16,7 @@ export type BookFormData = {
     author: string
     isbn: string
     publishedYear: number
-    category: string
+    genres: string[]
     totalCopies: number
     availableCopies: number
     addedDate: Date

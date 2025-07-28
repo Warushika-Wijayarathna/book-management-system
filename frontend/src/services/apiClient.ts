@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios"
+import axios from "axios"
 
 export const BASE_URL = "http://localhost:3000/api"
 
@@ -28,14 +28,15 @@ apiClient.interceptors.response.use(
                 const result = await apiClient.post("/auth/refresh-token");
                 const newAccessToken = result.data.accessToken;
                 setHeader(newAccessToken);
+                localStorage.setItem("accessToken", newAccessToken);
                 originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
                 return apiClient(originalRequest);
             } catch (err) {
-                if (err instanceof AxiosError) {
-                    if (err.response?.status === 401) {
-                        window.location.href = "/login";
-                    }
-                }
+                console.log("Token refresh failed:", err);
+                localStorage.removeItem("accessToken");
+                setHeader("");
+                window.location.href = "/signin";
+                return Promise.reject(err);
             }
         }
         return Promise.reject(error);

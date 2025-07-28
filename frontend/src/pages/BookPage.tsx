@@ -7,30 +7,70 @@ import { storage } from "../services/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import DropzoneComponent from "../components/form/form-elements/DropZone";
 import { useModalContext } from "../context/ModalContext";
+import { useAuth } from "../context/useAuth";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import SearchBar from "../components/common/SearchBar";
 
 export default function BookPage() {
+  const { isLoggedIn, isAuthenticating } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [formData, setFormData] = useState<BookFormData | null>(null);
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [dropzoneReset, setDropzoneReset] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [newGenre, setNewGenre] = useState<string>("");
   const { isModalOpen, setModalOpen } = useModalContext();
 
+  const genreSuggestions = [
+    "Fiction", "Non-fiction", "Fantasy", "Science Fiction", "Mystery",
+    "Thriller", "Romance", "Horror", "Adventure", "Historical Fiction",
+    "Biography", "Self-help", "Philosophy", "Poetry", "Drama",
+    "Satire", "Young Adult", "Children's", "Art", "Travel"
+  ];
+
   useEffect(() => {
-    fetchBooks();
-  }, []);
+    if (isLoggedIn && !isAuthenticating) {
+      console.log('BookPage - Fetching books...');
+      fetchBooks();
+    } else {
+      console.log('BookPage - Not fetching books:', { isLoggedIn, isAuthenticating });
+    }
+  }, [isLoggedIn, isAuthenticating]);
+
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredBooks(books);
+    } else {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      setFilteredBooks(books.filter(book =>
+        book.title.toLowerCase().includes(lowercaseSearch) ||
+        book.author.toLowerCase().includes(lowercaseSearch) ||
+        book.isbn.toLowerCase().includes(lowercaseSearch) ||
+        (book.genres && book.genres.some(genre =>
+          genre.toLowerCase().includes(lowercaseSearch)
+        ))
+      ));
+    }
+  }, [searchTerm, books]);
 
   const fetchBooks = async () => {
     try {
       const books = await getBooks();
       setBooks(books);
+      setFilteredBooks(books);
     } catch (error) {
+      console.error('Error fetching books:', error);
       toast.error("Failed to load books");
     }
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
   };
 
   const handleAddClick = () => {
@@ -39,7 +79,7 @@ export default function BookPage() {
       author: "",
       isbn: "",
       publishedYear: new Date().getFullYear(),
-      category: "",
+      genres: [], // Initialize with empty array for genres
       totalCopies: 1,
       availableCopies: 1,
       addedDate: new Date(),
@@ -52,7 +92,10 @@ export default function BookPage() {
 
   const handleEditClick = (book: Book) => {
     const { _id, ...formBookData } = book;
-    setFormData({ ...formBookData });
+    setFormData({
+      ...formBookData,
+      genres: Array.isArray(book.genres) ? book.genres : []
+    });
     setEditingBookId(book._id);
     setDropzoneReset(true);
     setModalOpen(true);
@@ -74,17 +117,64 @@ export default function BookPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle adding a new genre to the genres array
+  const handleAddGenre = () => {
+    if (!formData) return;
+    if (!newGenre.trim()) {
+      toast.error("Please enter a genre");
+      return;
+    }
+    if (formData.genres.includes(newGenre.trim())) {
+      toast.error("This genre is already added");
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      genres: [...formData.genres, newGenre.trim()]
+    });
+    setNewGenre("");
+  };
+
+  // Handle removing a genre from the genres array
+  const handleRemoveGenre = (genreToRemove: string) => {
+    if (!formData) return;
+    setFormData({
+      ...formData,
+      genres: formData.genres.filter(genre => genre !== genreToRemove)
+    });
+  };
+
+  // Add a genre from suggestions
+  const handleAddSuggestedGenre = (genre: string) => {
+    if (!formData) return;
+    if (formData.genres.includes(genre)) {
+      toast.error("This genre is already added");
+      return;
+    }
+    setFormData({
+      ...formData,
+      genres: [...formData.genres, genre]
+    });
+  };
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
 
     // Validate required fields
-    const requiredFields = ["title", "author", "isbn", "publishedYear", "category"];
+    const requiredFields = ["title", "author", "isbn", "publishedYear"];
     for (const field of requiredFields) {
       if (!formData[field as keyof BookFormData]) {
         toast.error(`Please fill out the "${field}" field.`);
         return;
       }
+    }
+
+    // Check if at least one genre is provided
+    if (!formData.genres || formData.genres.length === 0) {
+      toast.error("Please add at least one genre");
+      return;
     }
 
     setIsUploading(true);
@@ -129,9 +219,18 @@ export default function BookPage() {
             <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleAddClick}>Add Book</button>
           </div>
 
+          {/* Search Bar */}
+          <div className="mb-4">
+            <SearchBar
+              placeholder="Search by title, author, ISBN, or genre..."
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </div>
+
           {/* Book Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {books.map(book => (
+            {filteredBooks.map(book => (
                 <div key={book._id} className="bg-white rounded-xl shadow border p-4 flex flex-col items-center">
                   {book.imageUrl ? (
                       <img src={book.imageUrl} alt={book.title} className="w-32 h-40 object-cover rounded mb-3" />
@@ -143,7 +242,17 @@ export default function BookPage() {
                     <p className="text-sm text-gray-600 mb-1">by {book.author}</p>
                     <p className="text-xs text-gray-500 mb-1">ISBN: {book.isbn}</p>
                     <p className="text-xs text-gray-500 mb-1">Year: {book.publishedYear}</p>
-                    <p className="text-xs text-gray-500 mb-1">Category: {book.category}</p>
+                    <div className="flex flex-wrap justify-center gap-1 mb-1">
+                      {book.genres && book.genres.length > 0 ? (
+                        book.genres.map((genre, index) => (
+                          <span key={index} className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                            {genre}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs text-gray-400">No genres</span>
+                      )}
+                    </div>
                     <p className="text-xs text-gray-500 mb-1">Total: {book.totalCopies} | Available: {book.availableCopies}</p>
                   </div>
                   <div className="mt-3 flex gap-2">
@@ -161,7 +270,7 @@ export default function BookPage() {
           {/* Modal */}
           {isModalOpen && formData && (
               <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-[99999]">
-                <div className="bg-white p-6 rounded shadow-xl w-full max-w-md">
+                <div className="bg-white p-6 rounded shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
                   <h4 className="mb-4 font-semibold">{editingBookId ? "Edit Book" : "Add Book"}</h4>
                   <form onSubmit={handleFormSubmit}>
                     <label>Title</label>
@@ -172,46 +281,90 @@ export default function BookPage() {
                     <input name="isbn" value={formData.isbn} onChange={handleFormChange} className="mb-2 w-full border px-2 py-1" />
                     <label>Published Year</label>
                     <input type="number" name="publishedYear" value={formData.publishedYear} onChange={handleFormChange} className="mb-2 w-full border px-2 py-1" />
-                    <label>Category</label>
-                    <input name="category" value={formData.category} onChange={handleFormChange} className="mb-2 w-full border px-2 py-1" />
+
+                    {/* Genres Section */}
+                    <label className="block mb-1">Genres</label>
+                    <div className="flex flex-wrap gap-1 mb-2 p-2 border rounded">
+                      {formData.genres && formData.genres.map((genre, index) => (
+                        <div key={index} className="flex items-center bg-blue-100 rounded px-2 py-1">
+                          <span className="text-sm mr-1">{genre}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveGenre(genre)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <FontAwesomeIcon icon={faTimes} size="sm" />
+                          </button>
+                        </div>
+                      ))}
+                      {(!formData.genres || formData.genres.length === 0) && (
+                        <span className="text-sm text-gray-400 italic">No genres added yet</span>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2 mb-4">
+                      <input
+                        type="text"
+                        placeholder="Add a genre"
+                        value={newGenre}
+                        onChange={(e) => setNewGenre(e.target.value)}
+                        className="flex-1 border px-2 py-1"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddGenre}
+                        className="bg-green-500 text-white px-2 py-1 rounded"
+                      >
+                        <FontAwesomeIcon icon={faPlus} />
+                      </button>
+                    </div>
+
+                    {/* Genre Suggestions */}
+                    <div className="mb-4">
+                      <label className="block text-sm mb-1">Common Genres:</label>
+                      <div className="flex flex-wrap gap-1">
+                        {genreSuggestions.map((genre) => (
+                          <button
+                            key={genre}
+                            type="button"
+                            onClick={() => handleAddSuggestedGenre(genre)}
+                            disabled={formData.genres && formData.genres.includes(genre)}
+                            className={`text-xs px-2 py-1 rounded ${
+                              formData.genres && formData.genres.includes(genre)
+                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                            }`}
+                          >
+                            {genre}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     <label>Total Copies</label>
                     <input type="number" name="totalCopies" value={formData.totalCopies} onChange={handleFormChange} className="mb-2 w-full border px-2 py-1" />
                     <label>Available Copies</label>
                     <input type="number" name="availableCopies" value={formData.availableCopies} onChange={handleFormChange} className="mb-2 w-full border px-2 py-1" />
                     <label>Image</label>
                     <DropzoneComponent
-                        key={dropzoneReset.toString()}
-                        onDrop={(files) => {
-                          setImageFile(files[0] || null);
-                          setDropzoneReset(false);
-                        }}
-                        reset={dropzoneReset}
+                      onFileUploaded={(file) => setImageFile(file)}
+                      reset={dropzoneReset}
+                      imageUrl={formData.imageUrl}
                     />
                     <div className="mt-4 flex justify-end gap-2">
                       <button
-                          type="button"
-                          className="px-4 py-2 bg-gray-400 text-white rounded"
-                          onClick={() => setModalOpen(false)}
-                          disabled={isUploading}
+                        type="button"
+                        onClick={() => setModalOpen(false)}
+                        className="px-4 py-2 bg-gray-300 rounded"
                       >
                         Cancel
                       </button>
                       <button
-                          type="submit"
-                          className="px-4 py-2 bg-blue-600 text-white rounded flex items-center justify-center gap-2"
-                          disabled={isUploading}
+                        type="submit"
+                        disabled={isUploading}
+                        className={`px-4 py-2 rounded ${isUploading ? "bg-blue-300" : "bg-blue-600 text-white"}`}
                       >
-                        {isUploading ? (
-                            <>
-                              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5-5-5-5v4a12 12 0 100 24v-4l-5 5 5 5v-4a8 8 0 01-8-8z" />
-                              </svg>
-                              <span>Uploading...</span>
-                            </>
-                        ) : (
-                            <span>{editingBookId ? "Update" : "Add"}</span>
-                        )}
+                        {isUploading ? "Saving..." : "Save"}
                       </button>
                     </div>
                   </form>

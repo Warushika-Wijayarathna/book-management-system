@@ -8,11 +8,12 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-    const [accessToken, setAccessToken] = useState<string>(() => localStorage.getItem("accessToken") || "")
+    const [accessToken, setAccessToken] = useState<string>("")
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(true)
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
     const handleToken = (token: string) => {
+        console.log("Setting new token in headers:", token.substring(0, 20) + "...");
         setAccessToken(token)
         setHeader(token)
         localStorage.setItem("accessToken", token)
@@ -33,50 +34,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     useEffect(() => {
-        // On mount, set the Authorization header if token exists in localStorage
-        const storedToken = localStorage.getItem("accessToken") || "";
-        if (storedToken) {
-            setHeader(storedToken);
-            setIsLoggedIn(true);
-            setAccessToken(storedToken);
-        } else {
-            setHeader("");
-        }
-        // eslint-disable-next-line
-    }, []);
+        const initializeAuth = async () => {
+            const storedToken = localStorage.getItem("accessToken") || "";
 
-    useEffect(() => {
-        if (accessToken) {
-            handleToken(accessToken)
-            setIsLoggedIn(true)
-        } else {
-            setHeader("")
-        }
-    }, [accessToken])
+            if (storedToken) {
+                setHeader(storedToken);
 
-    useEffect(() => {
-        const publicPaths = ["/", "/signin", "/signup"]
-        const currentPath = window.location.pathname
+                try {
+                    const result = await apiClient.post("/auth/refresh-token");
+                    const newToken = result.data.accessToken;
+                    login(newToken);
+                } catch (refreshError) {
+                    logout();
+                }
+                setIsAuthenticating(false);
+                return;
+            }
 
-        if (publicPaths.includes(currentPath)) {
-            setIsAuthenticating(false)
-            return
-        }
+            // Check if we're on a public path
+            const publicPaths = ["/", "/signin", "/signup"]
+            const currentPath = window.location.pathname
 
-        const tryRefresh = async () => {
+            if (publicPaths.includes(currentPath)) {
+                setIsAuthenticating(false)
+                return
+            }
+
+            // Try to refresh token for protected routes
             try {
                 const result = await apiClient.post("/auth/refresh-token")
                 const token = result.data.accessToken
                 login(token)
                 console.log("Token refreshed successfully")
             } catch (error) {
+                console.log("Token refresh failed, redirecting to login")
                 logout()
+                window.location.href = "/signin"
             } finally {
                 setIsAuthenticating(false)
             }
         }
 
-        tryRefresh()
+        initializeAuth()
     }, [])
 
     return (

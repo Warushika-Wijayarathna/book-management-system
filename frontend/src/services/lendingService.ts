@@ -1,10 +1,9 @@
-import axios from "axios";
+import apiClient from "./apiClient";
 import { Lending } from "../types/Lending";
 
-const API_URL = "/api/lendings";
 
 export const getLendings = async (): Promise<Lending[]> => {
-  const res = await axios.get(API_URL);
+  const res = await apiClient.get("/lendings");
   return res.data;
 };
 
@@ -13,12 +12,11 @@ export const lendBook = async (data: {
   bookId: string;
   days?: number;
 }): Promise<Lending> => {
-  const res = await axios.post(API_URL, data);
+  const res = await apiClient.post("/lendings", data);
   return res.data.lending;
 };
 
 export const returnBook = async (lendingId: string): Promise<Lending> => {
-  const res = await axios.patch(`${API_URL}/${lendingId}/return`);
+  const res = await apiClient.put(`/lendings/return/${lendingId}`);
   return res.data.lending;
 };
-

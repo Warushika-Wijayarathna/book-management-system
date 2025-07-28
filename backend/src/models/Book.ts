@@ -5,7 +5,7 @@ type Book = {
     author: string
     isbn: string
     publishedYear: number
-    category: string
+    genres: string[]
     totalCopies: number
     availableCopies: number
     addedDate: Date
@@ -34,10 +34,15 @@ const bookSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Published year is required"]
     },
-    category: {
-        type: String,
-        required: [true, "Category is required"],
-        trim: true
+    genres: {
+        type: [String],
+        required: [true, "At least one genre is required"],
+        validate: {
+            validator: function(v: string[]) {
+                return Array.isArray(v) && v.length > 0;
+            },
+            message: "Please provide at least one genre"
+        }
     },
     totalCopies: {
         type: Number,

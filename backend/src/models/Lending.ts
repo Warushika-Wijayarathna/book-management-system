@@ -6,7 +6,7 @@ type Lending = {
     borrowedDate: Date
     dueDate: Date
     returnedDate?: Date
-    status: "borrowed" | "returned" | "overdue"
+    status: "borrowed" | "returned" | "overdue" | "returnedLate"
 }
 
 const lendingSchema = new mongoose.Schema({
@@ -34,7 +34,7 @@ const lendingSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["borrowed", "returned", "overdue"],
+        enum: ["borrowed", "returned", "overdue", "returnedLate"],
         default: "borrowed"
     }
 })
