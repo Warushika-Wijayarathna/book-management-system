@@ -7,6 +7,7 @@ import notificationRouter from "./notification.routes"
 import overdueRouter from "./overdue.routes"
 import userRouter from "./user.routes"
 import auditRouter from "./audit.routes"
+import dashboardRouter from "./dashboard.routes"
 
 const rootRouter = Router()
 
@@ -15,6 +16,7 @@ console.log(`🛣️  [ROUTES] Setting up root router...`)
 rootRouter.use("/audit", auditRouter)
 rootRouter.use("/auth", authRouter)
 rootRouter.use("/books", bookRouter)
+rootRouter.use("/dashboard", dashboardRouter)
 rootRouter.use("/lendings", lendingRouter)
 rootRouter.use("/notifications", notificationRouter)
 rootRouter.use("/overdue", overdueRouter)

@@ -207,6 +207,11 @@ export default function LendPage() {
   };
 
   const handleEditClick = async (lending: any) => {
+    if (lending.status === "returned" || lending.status === "returnedLate") {
+      toast.info("Cannot edit completed lending records. This book has already been returned.");
+      return;
+    }
+
     if (books.length === 0) await fetchBooks();
     if (readers.length === 0) await fetchReaders();
 

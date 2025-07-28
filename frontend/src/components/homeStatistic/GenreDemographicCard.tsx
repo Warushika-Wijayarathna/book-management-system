@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Chart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
+import { dashboardService, GenreStatistic } from "../../services/dashboardService";
 
 export default function GenreDemographicCard() {
   const [isOpen, setIsOpen] = useState(false);
+  const [genreData, setGenreData] = useState<GenreStatistic[]>([]);
+  const [loading, setLoading] = useState(true);
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -12,6 +17,79 @@ export default function GenreDemographicCard() {
 
   function closeDropdown() {
     setIsOpen(false);
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await dashboardService.getGenreStatistics();
+        setGenreData(data);
+      } catch (error) {
+        console.error('Error fetching genre statistics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const chartOptions: ApexOptions = {
+    chart: {
+      type: 'donut',
+      height: 300
+    },
+    labels: genreData.map(item => item.genre),
+    colors: ['#3B82F6', '#1E40AF', '#1D4ED8', '#2563EB', '#60A5FA', '#93C5FD', '#BFDBFE', '#DBEAFE'], // Changed to blue shades
+    legend: {
+      position: 'bottom',
+      horizontalAlign: 'center'
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '60%',
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              label: 'Total Books',
+              formatter: function (w) {
+                return w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0).toString()
+              }
+            }
+          }
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val: number) {
+        return Math.round(val) + '%'
+      }
+    }
+  };
+
+  const chartSeries = genreData.map(item => item.count);
+
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6">
+        <div className="flex justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+              Books by Genre
+            </h3>
+            <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
+              Number of books based on genre
+            </p>
+          </div>
+        </div>
+        <div className="animate-pulse">
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -22,7 +100,7 @@ export default function GenreDemographicCard() {
               Books by Genre
             </h3>
             <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-              Number of books based on genre
+              Number of books based on genre ({genreData.reduce((total, item) => total + item.count, 0)} total)
             </p>
           </div>
           <div className="relative inline-block">
@@ -44,70 +122,29 @@ export default function GenreDemographicCard() {
                   onItemClick={closeDropdown}
                   className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
               >
-                Delete
+                Export Data
               </DropdownItem>
             </Dropdown>
           </div>
         </div>
-        <div className="px-4 py-6 my-6 overflow-hidden border border-gary-200 rounded-2xl dark:border-gray-800 sm:px-6">
-          <div
-              id="mapOne"
-              className="mapOne map-btn -mx-4 -my-6 h-[212px] w-[252px] 2xsm:w-[307px] xsm:w-[358px] sm:-mx-6 md:w-[668px] lg:w-[634px] xl:w-[393px] 2xl:w-[554px]"
-          >
-          </div>
-        </div>
 
-        <div className="space-y-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="items-center w-full rounded-full max-w-8">
-                <img src="./images/genre/genre-01.svg" alt="fiction" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-800 text-theme-sm dark:text-white/90">
-                  Fiction
-                </p>
-                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                1,200 Books
-              </span>
-              </div>
-            </div>
-
-            <div className="flex w-full max-w-[140px] items-center gap-3">
-              <div className="relative block h-2 w-full max-w-[100px] rounded-sm bg-gray-200 dark:bg-gray-800">
-                <div className="absolute left-0 top-0 flex h-full w-[60%] items-center justify-center rounded-sm bg-brand-500 text-xs font-medium text-white"></div>
-              </div>
-              <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                60%
-              </p>
+        {genreData.length === 0 ? (
+          <div className="flex items-center justify-center h-64 text-gray-500">
+            <div className="text-center">
+              <p className="text-lg">No genre data available</p>
+              <p className="text-sm">Add books with genres to see the distribution</p>
             </div>
           </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="items-center w-full rounded-full max-w-8">
-                <img src="./images/genre/genre-02.svg" alt="non-fiction" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-800 text-theme-sm dark:text-white/90">
-                  Non-Fiction
-                </p>
-                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                800 Books
-              </span>
-              </div>
-            </div>
-
-            <div className="flex w-full max-w-[140px] items-center gap-3">
-              <div className="relative block h-2 w-full max-w-[100px] rounded-sm bg-gray-200 dark:bg-gray-800">
-                <div className="absolute left-0 top-0 flex h-full w-[40%] items-center justify-center rounded-sm bg-brand-500 text-xs font-medium text-white"></div>
-              </div>
-              <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                40%
-              </p>
-            </div>
+        ) : (
+          <div className="mt-4">
+            <Chart
+              options={chartOptions}
+              series={chartSeries}
+              type="donut"
+              height={300}
+            />
           </div>
-        </div>
+        )}
       </div>
   );
 }

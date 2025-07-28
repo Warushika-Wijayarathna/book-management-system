@@ -4,6 +4,12 @@ type User = {
     name: string
     email: string
     password: string
+    profilePicture?: string
+    bio?: string
+    phone?: string
+    address?: string
+    dateOfBirth?: Date
+    updatedAt?: Date
 }
 
 const userSchema = new mongoose.Schema({
@@ -28,7 +34,34 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Password required"],
         minlength: [6, "Password must be at least 6 characters long"]
+    },
+    profilePicture: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    bio: {
+        type: String,
+        maxlength: [500, "Bio must be less than 500 characters"],
+        required: false,
+        trim: true
+    },
+    phone: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    address: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    dateOfBirth: {
+        type: Date,
+        required: false
     }
+}, {
+    timestamps: true
 })
 
 export const UserModel = mongoose.model<User>("Users", userSchema)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { AuthContext } from "./AuthContext"
+import { AuthContext, User } from "./AuthContext"
 import apiClient, { setHeader } from "../services/apiClient.ts"
 
 interface AuthProviderProps {
@@ -8,34 +8,68 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-    const [accessToken, setAccessToken] = useState<string>("")
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(true)
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
+    const [user, setUser] = useState<User | null>(null)
 
     const handleToken = (token: string) => {
         console.log("Setting new token in headers:", token.substring(0, 20) + "...");
-        setAccessToken(token)
         setHeader(token)
         localStorage.setItem("accessToken", token)
         setIsAdmin(true)
     }
 
-    const login = (token: string) => {
+    const fetchUserProfile = async () => {
+        try {
+            const response = await apiClient.get("/user/me")
+            const userData = response.data
+            setUser(userData)
+            localStorage.setItem("userData", JSON.stringify(userData))
+        } catch (error) {
+            console.error("Error fetching user profile:", error)
+        }
+    }
+
+    const login = (token: string, userData?: User) => {
         setIsLoggedIn(true)
         handleToken(token)
+        if (userData) {
+            setUser(userData)
+            localStorage.setItem("userData", JSON.stringify(userData))
+        } else {
+            // Fetch user data if not provided
+            fetchUserProfile()
+        }
     }
 
     const logout = () => {
         setIsLoggedIn(false)
         setIsAdmin(false)
-        setAccessToken("")
+        setUser(null)
         setHeader("")
         localStorage.removeItem("accessToken")
+        localStorage.removeItem("userData")
+    }
+
+    const updateUser = (userData: User) => {
+        setUser(userData)
+        localStorage.setItem("userData", JSON.stringify(userData))
     }
 
     useEffect(() => {
         const initializeAuth = async () => {
             const storedToken = localStorage.getItem("accessToken") || "";
+            const storedUserData = localStorage.getItem("userData");
+
+            if (storedUserData) {
+                try {
+                    const userData = JSON.parse(storedUserData);
+                    setUser(userData);
+                } catch (error) {
+                    console.error("Error parsing stored user data:", error);
+                    localStorage.removeItem("userData");
+                }
+            }
 
             if (storedToken) {
                 setHeader(storedToken);
@@ -43,7 +77,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 try {
                     const result = await apiClient.post("/auth/refresh-token");
                     const newToken = result.data.accessToken;
-                    login(newToken);
+
+                    // Set the new token
+                    handleToken(newToken);
+                    setIsLoggedIn(true);
+
+                    // Fetch fresh user data
+                    await fetchUserProfile();
                 } catch (refreshError) {
                     logout();
                 }
@@ -84,6 +124,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 logout,
                 isAuthenticating,
                 isAdmin,
+                user,
+                updateUser,
+                fetchUserProfile,
             }}
         >
             {children}

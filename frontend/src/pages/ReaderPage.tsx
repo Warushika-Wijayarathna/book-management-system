@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
+import ReaderLendingHistory from "../components/common/ReaderLendingHistory";
 import { getReaders, addReader, updateReader, deleteReader } from "../services/readerService";
 import { Reader, ReaderFormData } from "../types/Reader";
 import { useModalContext } from "../context/ModalContext";
@@ -38,7 +39,6 @@ export default function ReaderPage() {
   const applyFilters = () => {
     let filtered = readers;
 
-    // Apply search filter first
     if (searchTerm.trim()) {
       const lowercaseSearch = searchTerm.toLowerCase();
       filtered = filtered.filter(reader =>
@@ -49,7 +49,6 @@ export default function ReaderPage() {
       );
     }
 
-    // Apply registration date filters
     if (activeFilters.registrationDate.length > 0) {
       filtered = filtered.filter(reader => {
         const createdDate = new Date(reader.createdAt);
@@ -84,14 +83,12 @@ export default function ReaderPage() {
       });
     }
 
-    // Apply location filters
     if (activeFilters.location.length > 0) {
       filtered = filtered.filter(reader =>
         activeFilters.location.some(location => reader.address?.includes(location))
       );
     }
 
-    // Apply activity status filters
     if (activeFilters.activityStatus.length > 0) {
       filtered = filtered.filter(reader => {
         const createdDate = new Date(reader.createdAt);
@@ -224,42 +221,73 @@ export default function ReaderPage() {
             onFiltersChange={handleFilterChange}
           />
         </div>
-        {/* Reader Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-xl">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="py-2 px-4 border-b text-left">Name</th>
-                <th className="py-2 px-4 border-b text-left">Email</th>
-                <th className="py-2 px-4 border-b text-left">Contact No</th>
-                <th className="py-2 px-4 border-b text-left">Address</th>
-                <th className="py-2 px-4 border-b text-left">Registered</th>
-                <th className="py-2 px-4 border-b text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredReaders.map(reader => (
-                <tr key={reader._id} className="border-b hover:bg-gray-50">
-                  <td className="py-2 px-4">{reader.name}</td>
-                  <td className="py-2 px-4">{reader.email}</td>
-                  <td className="py-2 px-4">{reader.contactNumber}</td>
-                  <td className="py-2 px-4">{reader.address}</td>
-                  <td className="py-2 px-4">{reader.createdAt}</td>
-                  <td className="py-2 px-4">
-                    <div className="flex items-center space-x-2">
-                      <button className="px-3 py-1 bg-blue-500 text-white rounded flex items-center justify-center" onClick={() => handleEditClick(reader)}>
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                      <button className="px-3 py-1 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => handleDeleteClick(reader._id)}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
+        {/* Reader Rows */}
+        <div className="space-y-4">
+          {filteredReaders.map(reader => (
+            <div key={reader._id} className="bg-white rounded-xl shadow border">
+              {/* Reader Info Row */}
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-6 flex-1">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-lg text-gray-900 mb-1">{reader.name}</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Email:</span>
+                          <span className="truncate">{reader.email}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Contact:</span> {reader.contactNumber}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Registered:</span> {new Date(reader.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="mt-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Address:</span>
+                          <span className="truncate">{reader.address}</span>
+                        </div>
+                      </div>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                      onClick={() => handleEditClick(reader)}
+                      title="Edit Reader"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                      <span className="hidden sm:inline">Edit</span>
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
+                      onClick={() => handleDeleteClick(reader._id)}
+                      title="Delete Reader"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                      <span className="hidden sm:inline">Delete</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lending History Section */}
+              <div className="px-6 pb-6">
+                <ReaderLendingHistory readerId={reader._id} />
+              </div>
+            </div>
+          ))}
         </div>
+
+        {/* Empty State */}
+        {filteredReaders.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-gray-500 text-lg mb-2">No readers found</div>
+            <div className="text-gray-400">Try adjusting your search or filter criteria</div>
+          </div>
+        )}
+
         {/* Modal */}
         {isModalOpen && formData && (
           <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-[99999]">

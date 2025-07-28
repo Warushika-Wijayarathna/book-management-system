@@ -30,3 +30,8 @@ export const getLendingsByBook = async (bookId: string): Promise<Lending[]> => {
   const res = await apiClient.get(`/lendings/book/${bookId}`);
   return res.data;
 };
+
+export const getLendingsByReader = async (readerId: string): Promise<Lending[]> => {
+  const res = await apiClient.get(`/lendings/reader/${readerId}`);
+  return res.data;
+};

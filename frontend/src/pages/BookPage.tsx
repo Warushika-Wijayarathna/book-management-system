@@ -288,52 +288,115 @@ export default function BookPage() {
             />
           </div>
 
-          {/* Book Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Book Rows */}
+          <div className="space-y-4">
             {filteredBooks.map(book => (
-                <div key={book._id} className="bg-white rounded-xl shadow border flex flex-col">
-                  {/* Book Info Section */}
-                  <div className="p-4 flex flex-col items-center">
-                    {book.imageUrl ? (
-                        <img src={book.imageUrl} alt={book.title} className="w-32 h-40 object-cover rounded mb-3" />
-                    ) : (
-                        <div className="w-32 h-40 bg-gray-200 flex items-center justify-center rounded mb-3 text-gray-500">No Image</div>
-                    )}
-                    <div className="w-full text-center">
-                      <h4 className="font-bold text-lg mb-1">{book.title}</h4>
-                      <p className="text-sm text-gray-600 mb-1">by {book.author}</p>
-                      <p className="text-xs text-gray-500 mb-1">ISBN: {book.isbn}</p>
-                      <p className="text-xs text-gray-500 mb-1">Year: {book.publishedYear}</p>
-                      <div className="flex flex-wrap justify-center gap-1 mb-1">
-                        {book.genres && book.genres.length > 0 ? (
-                          book.genres.map((genre, index) => (
-                            <span key={index} className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                              {genre}
-                            </span>
-                          ))
+                <div key={book._id} className="bg-white rounded-xl shadow border">
+                  {/* Book Info Row */}
+                  <div className="p-6 border-b border-gray-100">
+                    <div className="flex items-start gap-6">
+                      {/* Book Image */}
+                      <div className="flex-shrink-0">
+                        {book.imageUrl ? (
+                            <img src={book.imageUrl} alt={book.title} className="w-24 h-32 object-cover rounded shadow-sm" />
                         ) : (
-                          <span className="text-xs text-gray-400">No genres</span>
+                            <div className="w-24 h-32 bg-gray-200 flex items-center justify-center rounded shadow-sm text-gray-500 text-xs">No Image</div>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 mb-1">Total: {book.totalCopies} | Available: {book.availableCopies}</p>
-                    </div>
-                    <div className="mt-3 flex gap-2">
-                      <button className="px-3 py-1 bg-blue-500 text-white rounded flex items-center justify-center" onClick={() => handleEditClick(book)}>
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                      <button className="px-3 py-1 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => handleDeleteClick(book._id)}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
+
+                      {/* Book Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-xl text-gray-900 mb-1 truncate">{book.title}</h4>
+                            <p className="text-lg text-gray-600 mb-2">by {book.author}</p>
+                          </div>
+                          <div className="flex items-center gap-3 ml-4">
+                            <button
+                              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                              onClick={() => handleEditClick(book)}
+                              title="Edit Book"
+                            >
+                              <FontAwesomeIcon icon={faEdit} />
+                              <span className="hidden sm:inline">Edit</span>
+                            </button>
+                            <button
+                              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
+                              onClick={() => handleDeleteClick(book._id)}
+                              title="Delete Book"
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                              <span className="hidden sm:inline">Delete</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">ISBN:</span>
+                            <span className="truncate">{book.isbn}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">Year:</span> {book.publishedYear}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">Copies:</span> {book.availableCopies}/{book.totalCopies} available
+                          </div>
+                        </div>
+
+                        {/* Genres */}
+                        <div className="mb-2">
+                          <span className="font-medium text-sm text-gray-700 mr-2">Genres:</span>
+                          <div className="inline-flex flex-wrap gap-1">
+                            {book.genres && book.genres.length > 0 ? (
+                              book.genres.map((genre, index) => (
+                                <span key={index} className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                                  {genre}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-xs text-gray-400 italic">No genres</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Availability Status */}
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm text-gray-700">Status:</span>
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            book.availableCopies > 0 
+                              ? book.availableCopies <= 5 
+                                ? 'bg-yellow-100 text-yellow-800' 
+                                : 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {book.availableCopies > 0
+                              ? book.availableCopies <= 5
+                                ? 'Low Stock'
+                                : 'Available'
+                              : 'Out of Stock'
+                            }
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   {/* Lending History Section */}
-                  <div className="px-4 pb-4">
+                  <div className="px-6 pb-6">
                     <BookLendingHistory bookId={book._id} />
                   </div>
                 </div>
             ))}
           </div>
+
+          {/* Empty State */}
+          {filteredBooks.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-500 text-lg mb-2">No books found</div>
+              <div className="text-gray-400">Try adjusting your search or filter criteria</div>
+            </div>
+          )}
 
           {/* Modal */}
           {isModalOpen && formData && (

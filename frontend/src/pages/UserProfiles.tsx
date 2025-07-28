@@ -1,7 +1,6 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
-import UserInfoCard from "../components/UserProfile/UserInfoCard";
-import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import PageMeta from "../components/common/PageMeta";
+import ProfilePage from "../components/UserProfile/ProfilePage";
 
 export default function UserProfiles() {
   return (
@@ -11,15 +10,7 @@ export default function UserProfiles() {
         description="This is Profile page for BookClub"
       />
       <PageBreadcrumb pageTitle="Profile" />
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
-          Profile
-        </h3>
-        <div className="space-y-6">
-          <UserInfoCard />
-          <UserAddressCard />
-        </div>
-      </div>
+      <ProfilePage />
     </>
   );
 }
