@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
-import { useModalContext } from "../context/ModalContext";
+import { useAuth } from "../context/useAuth";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -11,11 +11,19 @@ import { getLendings, lendBook, returnBook } from "../services/lendingService";
 import AddReaderForm from "../components/form/AddReaderForm";
 import CustomDialog from "../components/common/CustomDialog";
 import SearchBar from "../components/common/SearchBar";
+import LendingFilters, { LendingFilters as LendingFiltersType } from "../components/filters/LendingFilters";
 
 export default function LendPage() {
+  const { isLoggedIn, isAuthenticating } = useAuth();
   const [lendings, setLendings] = useState<any[]>([]);
   const [filteredLendings, setFilteredLendings] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [activeFilters, setActiveFilters] = useState<LendingFiltersType>({
+    status: [],
+    dueDateRange: [],
+    borrowedDateRange: [],
+    overdueOnly: []
+  });
   const [formData, setFormData] = useState<any>({});
   const [editingLendingId, setEditingLendingId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -29,34 +37,30 @@ export default function LendPage() {
   const [searchedReader, setSearchedReader] = useState<any | null>(null);
   const [bookSearchValue, setBookSearchValue] = useState("");
   const [readerSearchValue, setReaderSearchValue] = useState("");
-  const [statusOptions] = useState([
-    { value: "borrowed", label: "Borrowed" },
-    { value: "returned", label: "Returned" },
-    { value: "returnedLate", label: "Returned Late" },
-    { value: "overdue", label: "Overdue" },
-  ]);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
 
-  const { setModalOpen } = useModalContext();
 
   useEffect(() => {
-    fetchLendings();
-    fetchBooks();
-    fetchReaders();
-  }, []);
+    if (isLoggedIn && !isAuthenticating) {
+      fetchLendings();
+      fetchBooks();
+      fetchReaders();
+    }
+  }, [isLoggedIn, isAuthenticating]);
 
   useEffect(() => {
-    // Filter lendings whenever search term changes
-    if (!searchTerm.trim()) {
-      setFilteredLendings(lendings);
-    } else {
+    applyFilters();
+  }, [searchTerm, lendings, activeFilters]);
+
+  const applyFilters = () => {
+    let filtered = lendings;
+
+    // Apply search filter first
+    if (searchTerm.trim()) {
       const lowercaseSearch = searchTerm.toLowerCase();
-      setFilteredLendings(lendings.filter(lending => {
-        // Check book info
+      filtered = filtered.filter(lending => {
         const bookTitle = typeof lending.bookId === 'object' ? lending.bookId.title?.toLowerCase() || '' : '';
         const bookIsbn = typeof lending.bookId === 'object' ? lending.bookId.isbn?.toLowerCase() || '' : '';
-
-        // Check reader info
         const readerName = typeof lending.readerId === 'object' ? lending.readerId.name?.toLowerCase() || '' : '';
         const readerContact = typeof lending.readerId === 'object' ? lending.readerId.contactNumber?.toLowerCase() || '' : '';
 
@@ -65,9 +69,107 @@ export default function LendPage() {
                readerName.includes(lowercaseSearch) ||
                readerContact.includes(lowercaseSearch) ||
                (lending.status && lending.status.toLowerCase().includes(lowercaseSearch));
-      }));
+      });
     }
-  }, [searchTerm, lendings]);
+
+    // Apply status filters
+    if (activeFilters.status.length > 0) {
+      filtered = filtered.filter(lending =>
+        activeFilters.status.includes(lending.status)
+      );
+    }
+
+    // Apply due date range filters
+    if (activeFilters.dueDateRange.length > 0) {
+      filtered = filtered.filter(lending => {
+        if (!lending.dueDate) return false;
+
+        const dueDate = new Date(lending.dueDate);
+        const today = new Date();
+        const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const dueDateOnly = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
+
+        return activeFilters.dueDateRange.some(range => {
+          switch (range) {
+            case 'overdue':
+              return dueDateOnly < todayOnly && lending.status !== 'returned';
+            case 'due-today':
+              return dueDateOnly.getTime() === todayOnly.getTime() && lending.status !== 'returned';
+            case 'due-this-week':
+              const weekEnd = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000));
+              return dueDateOnly >= todayOnly && dueDateOnly <= weekEnd && lending.status !== 'returned';
+            case 'due-next-week':
+              const nextWeekStart = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000));
+              const nextWeekEnd = new Date(today.getTime() + (14 * 24 * 60 * 60 * 1000));
+              return dueDateOnly >= nextWeekStart && dueDateOnly <= nextWeekEnd && lending.status !== 'returned';
+            case 'due-this-month':
+              return dueDateOnly.getMonth() === today.getMonth() &&
+                     dueDateOnly.getFullYear() === today.getFullYear() &&
+                     lending.status !== 'returned';
+            case 'due-later':
+              const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+              return dueDateOnly >= nextMonth && lending.status !== 'returned';
+            default:
+              return true;
+          }
+        });
+      });
+    }
+
+    // Apply borrowed date range filters
+    if (activeFilters.borrowedDateRange.length > 0) {
+      filtered = filtered.filter(lending => {
+        const borrowedDate = lending.borrowedDate || lending.lendDate;
+        if (!borrowedDate) return false;
+
+        const borrowed = new Date(borrowedDate);
+        const borrowedDateOnly = new Date(borrowed.getFullYear(), borrowed.getMonth(), borrowed.getDate());
+        const today = new Date();
+        const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        return activeFilters.borrowedDateRange.some(range => {
+          switch (range) {
+            case 'today':
+              return borrowedDateOnly.getTime() === todayOnly.getTime();
+            case 'this-week':
+              const weekStart = new Date(today.getTime() - (today.getDay() * 24 * 60 * 60 * 1000));
+              return borrowedDateOnly >= weekStart && borrowedDateOnly <= todayOnly;
+            case 'last-week':
+              const lastWeekStart = new Date(today.getTime() - ((today.getDay() + 7) * 24 * 60 * 60 * 1000));
+              const lastWeekEnd = new Date(today.getTime() - (today.getDay() * 24 * 60 * 60 * 1000));
+              return borrowedDateOnly >= lastWeekStart && borrowedDateOnly < lastWeekEnd;
+            case 'this-month':
+              return borrowedDateOnly.getMonth() === today.getMonth() &&
+                     borrowedDateOnly.getFullYear() === today.getFullYear();
+            case 'last-month':
+              const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
+              return borrowedDateOnly.getMonth() === lastMonth.getMonth() &&
+                     borrowedDateOnly.getFullYear() === lastMonth.getFullYear();
+            case 'last-3-months':
+              const threeMonthsAgo = new Date(today.getTime() - (90 * 24 * 60 * 60 * 1000));
+              return borrowedDateOnly >= threeMonthsAgo;
+            case 'older':
+              const threeMonthsAgoForOlder = new Date(today.getTime() - (90 * 24 * 60 * 60 * 1000));
+              return borrowedDateOnly < threeMonthsAgoForOlder;
+            default:
+              return true;
+          }
+        });
+      });
+    }
+
+    // Apply overdue only filter
+    if (activeFilters.overdueOnly.length > 0 && activeFilters.overdueOnly.includes('show-overdue-only')) {
+      filtered = filtered.filter(lending => {
+        if (!lending.dueDate) return false;
+        const dueDate = new Date(lending.dueDate);
+        const today = new Date();
+        return dueDate < today && lending.status !== 'returned';
+      });
+    }
+
+    setFilteredLendings(filtered);
+  };
 
   const fetchLendings = async () => {
     try {
@@ -128,14 +230,17 @@ export default function LendPage() {
     e.preventDefault();
     if (editingLendingId) {
       try {
-        if (formData.status === "returned") {
+        console.log("Formmmm datataaa", formData)
+        if (formData.status === "Return Book") {
           await returnBook(editingLendingId);
+          toast.success("Book returned successfully");
         } else {
           toast.info("Only 'Returned' status is supported for update.");
+          return; // Don't proceed if status is not supported
         }
-        toast.success("Lending updated successfully");
       } catch (err: any) {
         toast.error(err?.response?.data?.message || "Failed to update lending");
+        return; // Don't close form or refetch if there's an error
       }
       setFormOpen(false);
       fetchLendings();
@@ -182,6 +287,11 @@ export default function LendPage() {
     setSearchTerm(value);
   };
 
+  const handleFilterChange = (newFilters: LendingFiltersType) => {
+    setActiveFilters(newFilters);
+    // TODO: Implement filtering logic based on newFilters
+  };
+
   return (
       <div className="px-4 py-6">
         <PageMeta title="Lending Management" description="Manage lendings in the library" />
@@ -203,6 +313,15 @@ export default function LendPage() {
                   placeholder="Search by book title, ISBN, reader name, or status"
                   value={searchTerm}
                   onChange={handleSearch}
+                />
+              </div>
+
+              {/* Lending filters component */}
+              <div className="mb-4">
+                <LendingFilters
+                  lendings={lendings}
+                  activeFilters={activeFilters}
+                  onFiltersChange={handleFilterChange}
                 />
               </div>
 
@@ -326,13 +445,13 @@ export default function LendPage() {
                       <div className="mb-4">
                         <label className="block mb-1 text-sm font-medium text-gray-700">Status</label>
                         <select
-                          value={formData.status || ""}
+                          value={formData.status === "borrowed" || formData.status === "overdue" ? "" : formData.status || ""}
                           onChange={e => setFormData({ ...formData, status: e.target.value })}
                           className="w-full border px-4 py-2 rounded-lg"
                           required
                         >
                           <option value="" disabled>Select status</option>
-                          <option value="returned">Return Book</option>
+                          <option value="Return Book">Return Book</option>
                         </select>
                         {new Date() > new Date(formData.dueDate) && (
                           <p className="text-sm text-amber-600 mt-1">

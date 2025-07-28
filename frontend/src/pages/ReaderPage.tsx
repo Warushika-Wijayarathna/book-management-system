@@ -9,42 +9,117 @@ import { toast } from "react-toastify";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import SearchBar from "../components/common/SearchBar";
+import ReaderFilters, { ReaderFilters as ReaderFiltersType } from "../components/filters/ReaderFilters";
 
 export default function ReaderPage() {
   const { isLoggedIn, isAuthenticating } = useAuth();
   const [readers, setReaders] = useState<Reader[]>([]);
   const [filteredReaders, setFilteredReaders] = useState<Reader[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [activeFilters, setActiveFilters] = useState<ReaderFiltersType>({
+    registrationDate: [],
+    location: [],
+    activityStatus: []
+  });
   const [formData, setFormData] = useState<ReaderFormData | null>(null);
   const [editingReaderId, setEditingReaderId] = useState<string | null>(null);
   const { isModalOpen, setModalOpen } = useModalContext();
 
   useEffect(() => {
-    // Only fetch readers if user is authenticated and not currently authenticating
     if (isLoggedIn && !isAuthenticating) {
       fetchReaders();
     }
   }, [isLoggedIn, isAuthenticating]);
 
   useEffect(() => {
-    // Filter readers whenever search term changes
-    if (!searchTerm.trim()) {
-      setFilteredReaders(readers);
-    } else {
+    applyFilters();
+  }, [searchTerm, readers, activeFilters]);
+
+  const applyFilters = () => {
+    let filtered = readers;
+
+    // Apply search filter first
+    if (searchTerm.trim()) {
       const lowercaseSearch = searchTerm.toLowerCase();
-      setFilteredReaders(readers.filter(reader =>
+      filtered = filtered.filter(reader =>
         reader.name.toLowerCase().includes(lowercaseSearch) ||
         reader.email.toLowerCase().includes(lowercaseSearch) ||
         reader.contactNumber.includes(lowercaseSearch) ||
         (reader.address && reader.address.toLowerCase().includes(lowercaseSearch))
-      ));
+      );
     }
-  }, [searchTerm, readers]);
+
+    // Apply registration date filters
+    if (activeFilters.registrationDate.length > 0) {
+      filtered = filtered.filter(reader => {
+        const createdDate = new Date(reader.createdAt);
+        const now = new Date();
+
+        return activeFilters.registrationDate.some(range => {
+          switch (range) {
+            case 'this-month':
+              return createdDate.getFullYear() === now.getFullYear() &&
+                     createdDate.getMonth() === now.getMonth();
+            case 'last-month':
+              const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1);
+              return createdDate.getFullYear() === lastMonth.getFullYear() &&
+                     createdDate.getMonth() === lastMonth.getMonth();
+            case 'last-3-months':
+              const threeMonthsAgo = new Date(now.getTime() - (90 * 24 * 60 * 60 * 1000));
+              return createdDate >= threeMonthsAgo;
+            case 'last-6-months':
+              const sixMonthsAgo = new Date(now.getTime() - (180 * 24 * 60 * 60 * 1000));
+              return createdDate >= sixMonthsAgo;
+            case 'this-year':
+              return createdDate.getFullYear() === now.getFullYear();
+            case 'last-year':
+              return createdDate.getFullYear() === now.getFullYear() - 1;
+            case 'older':
+              const oneYearAgo = new Date(now.getTime() - (365 * 24 * 60 * 60 * 1000));
+              return createdDate < oneYearAgo;
+            default:
+              return true;
+          }
+        });
+      });
+    }
+
+    // Apply location filters
+    if (activeFilters.location.length > 0) {
+      filtered = filtered.filter(reader =>
+        activeFilters.location.some(location => reader.address?.includes(location))
+      );
+    }
+
+    // Apply activity status filters
+    if (activeFilters.activityStatus.length > 0) {
+      filtered = filtered.filter(reader => {
+        const createdDate = new Date(reader.createdAt);
+        const now = new Date();
+        const daysSinceCreation = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        return activeFilters.activityStatus.some(status => {
+          switch (status) {
+            case 'recently-active':
+              return daysSinceCreation <= 30;
+            case 'moderately-active':
+              return daysSinceCreation > 30 && daysSinceCreation <= 90;
+            case 'inactive':
+              return daysSinceCreation > 90;
+            case 'new-member':
+              return daysSinceCreation <= 7;
+            default:
+              return true;
+          }
+        });
+      });
+    }
+
+    setFilteredReaders(filtered);
+  };
 
   const fetchReaders = async () => {
     try {
-      // Debug: Check if authorization header is set
-      console.log('Fetching readers - checking auth token in localStorage:', localStorage.getItem("accessToken"));
       const readers = await getReaders();
       setReaders(readers);
       setFilteredReaders(readers);
@@ -56,6 +131,10 @@ export default function ReaderPage() {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
+  };
+
+  const handleFilterChange = (newFilters: ReaderFiltersType) => {
+    setActiveFilters(newFilters);
   };
 
   const handleAddClick = () => {
@@ -97,7 +176,6 @@ export default function ReaderPage() {
     e.preventDefault();
     if (!formData) return;
 
-    // Validate required fields
     const requiredFields = ["name", "email", "contactNumber", "address"];
     for (const field of requiredFields) {
       if (!formData[field as keyof ReaderFormData]) {
@@ -136,6 +214,14 @@ export default function ReaderPage() {
             placeholder="Search by name, email, contact number, or address"
             value={searchTerm}
             onChange={handleSearch}
+          />
+        </div>
+        {/* Reader Filters */}
+        <div className="mb-4">
+          <ReaderFilters
+            readers={readers}
+            activeFilters={activeFilters}
+            onFiltersChange={handleFilterChange}
           />
         </div>
         {/* Reader Table */}

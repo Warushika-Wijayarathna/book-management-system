@@ -12,12 +12,19 @@ import { toast } from "react-toastify";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import SearchBar from "../components/common/SearchBar";
+import BookFilters, { BookFilters as BookFiltersType } from "../components/filters/BookFilters";
 
 export default function BookPage() {
   const { isLoggedIn, isAuthenticating } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [activeFilters, setActiveFilters] = useState<BookFiltersType>({
+    genres: [],
+    authors: [],
+    yearRange: [],
+    availability: []
+  });
   const [formData, setFormData] = useState<BookFormData | null>(null);
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -43,20 +50,8 @@ export default function BookPage() {
   }, [isLoggedIn, isAuthenticating]);
 
   useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredBooks(books);
-    } else {
-      const lowercaseSearch = searchTerm.toLowerCase();
-      setFilteredBooks(books.filter(book =>
-        book.title.toLowerCase().includes(lowercaseSearch) ||
-        book.author.toLowerCase().includes(lowercaseSearch) ||
-        book.isbn.toLowerCase().includes(lowercaseSearch) ||
-        (book.genres && book.genres.some(genre =>
-          genre.toLowerCase().includes(lowercaseSearch)
-        ))
-      ));
-    }
-  }, [searchTerm, books]);
+    applyFilters();
+  }, [searchTerm, books, activeFilters]);
 
   const fetchBooks = async () => {
     try {
@@ -69,8 +64,73 @@ export default function BookPage() {
     }
   };
 
+  const applyFilters = () => {
+    let filtered = books;
+
+    // Apply search filter first
+    if (searchTerm.trim()) {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      filtered = filtered.filter(book =>
+        book.title.toLowerCase().includes(lowercaseSearch) ||
+        book.author.toLowerCase().includes(lowercaseSearch) ||
+        book.isbn.toLowerCase().includes(lowercaseSearch) ||
+        (book.genres && book.genres.some(genre =>
+          genre.toLowerCase().includes(lowercaseSearch)
+        ))
+      );
+    }
+
+    // Apply genre filters
+    if (activeFilters.genres.length > 0) {
+      filtered = filtered.filter(book =>
+        book.genres && book.genres.some(genre => activeFilters.genres.includes(genre))
+      );
+    }
+
+    // Apply author filters
+    if (activeFilters.authors.length > 0) {
+      filtered = filtered.filter(book =>
+        activeFilters.authors.includes(book.author)
+      );
+    }
+
+    // Apply year range filters
+    if (activeFilters.yearRange.length > 0) {
+      filtered = filtered.filter(book => {
+        return activeFilters.yearRange.some(range => {
+          const [start, end] = range.split('-').map(Number);
+          return book.publishedYear >= start && book.publishedYear <= end;
+        });
+      });
+    }
+
+    // Apply availability filters
+    if (activeFilters.availability.length > 0) {
+      filtered = filtered.filter(book => {
+        return activeFilters.availability.some(availability => {
+          switch (availability) {
+            case 'available':
+              return book.availableCopies > 0;
+            case 'unavailable':
+              return book.availableCopies === 0;
+            case 'low-stock':
+              return book.availableCopies > 0 && book.availableCopies <= 5;
+            default:
+              return true;
+          }
+        });
+      });
+    }
+
+    setFilteredBooks(filtered);
+  };
+
   const handleSearch = (value: string) => {
     setSearchTerm(value);
+  };
+
+  const handleFiltersChange = (filters: BookFiltersType) => {
+    setActiveFilters(filters);
   };
 
   const handleAddClick = () => {
@@ -225,6 +285,15 @@ export default function BookPage() {
               placeholder="Search by title, author, ISBN, or genre..."
               value={searchTerm}
               onChange={handleSearch}
+            />
+          </div>
+
+          {/* Book Filters - New Component */}
+          <div className="mb-4">
+            <BookFilters
+              books={books}
+              activeFilters={activeFilters}
+              onFiltersChange={handleFiltersChange}
             />
           </div>
 

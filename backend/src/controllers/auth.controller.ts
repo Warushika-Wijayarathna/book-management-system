@@ -6,7 +6,7 @@ import {APIError} from "../errors/APIError"
 
 const createAccessToken = (userId: string): string => {
     return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET!, {
-        expiresIn: "10s",
+        expiresIn: "15m",
     })
 }
 

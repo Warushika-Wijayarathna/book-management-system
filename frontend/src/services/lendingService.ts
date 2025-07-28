@@ -17,6 +17,11 @@ export const lendBook = async (data: {
 };
 
 export const returnBook = async (lendingId: string): Promise<Lending> => {
+  console.log("returnBook called with lendingId:", lendingId);
+  console.log("Making API call to:", `/lendings/return/${lendingId}`);
+
   const res = await apiClient.put(`/lendings/return/${lendingId}`);
+  console.log("returnBook API response:", res.data);
+
   return res.data.lending;
 };

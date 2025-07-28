@@ -48,18 +48,20 @@ export const lendBook = async (req: Request, res: Response, next: NextFunction) 
 }
 
 export const returnBook = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("returnBook called with params:", req.params)
+    console.log("=== returnBook controller called ===");
+    console.log("returnBook called with params:", req.params);
+    console.log("Request user:", req.user);
+    console.log("Request headers:", req.headers);
+
     try {
         const lending = await LendingModel.findById(req.params.id)
         if (!lending || lending.status === "returned" || lending.status === "returnedLate") {
             throw new APIError(404, "Lending record not found or already returned")
         }
 
-        // Check if lending is overdue
         const currentDate = new Date()
         const isOverdue = currentDate > lending.dueDate
 
-        // Determine the appropriate return status
         const returnStatus = isOverdue ? "returnedLate" : "returned"
 
         lending.status = returnStatus
@@ -83,7 +85,8 @@ export const returnBook = async (req: Request, res: Response, next: NextFunction
             wasOverdue: isOverdue
         })
     } catch (error) {
-        next(error)
+        console.error("Error in returnBook controller:", error);
+        next(error);
     }
 }
 

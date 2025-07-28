@@ -65,9 +65,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 const result = await apiClient.post("/auth/refresh-token")
                 const token = result.data.accessToken
                 login(token)
-                console.log("Token refreshed successfully")
             } catch (error) {
-                console.log("Token refresh failed, redirecting to login")
                 logout()
                 window.location.href = "/signin"
             } finally {
