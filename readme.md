@@ -23,7 +23,6 @@ A comprehensive full-stack book management system built with React, TypeScript, 
 - Due date tracking
 - Overdue notifications
 - Lending history and audit logs
-- Email notifications via SendGrid
 
 ### 📊 Dashboard & Analytics
 - Real-time statistics and metrics
@@ -87,7 +86,6 @@ Create a `.env` file in the backend directory:
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/book-management
 JWT_SECRET=your-jwt-secret-key
-SENDGRID_API_KEY=your-sendgrid-api-key
 EMAIL_FROM=your-email@domain.com
 ```
 
