@@ -13,7 +13,6 @@ export default function AuthLayout({
         {children}
   <div className="items-center hidden w-full h-full lg:w-1/2 bg-blue-200 dark:bg-white/5 lg:grid">
     <div className="relative flex items-center justify-center z-1">
-            {/* <!-- ===== Common Grid Shape Start ===== --> */}
             <GridShape />
             <div className="flex flex-col items-center max-w-xs">
               <Link to="/" className="block mb-4">
@@ -24,7 +23,7 @@ export default function AuthLayout({
                   alt="Logo"
                 />
               </Link>
-              <p className="text-center text-gray-400 dark:text-white/60">
+                <p className="text-center text-gray-700 dark:text-gray-300">
                 Connecting Readers, Sharing Stories: Your Book Club Community
               </p>
             </div>
