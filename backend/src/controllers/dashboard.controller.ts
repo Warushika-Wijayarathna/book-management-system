@@ -46,7 +46,6 @@ export const getMonthlyBorrowingTrends = async (req: Request, res: Response, nex
             }
         ])
 
-        // Create array for all 12 months with 0 default
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         const data = new Array(12).fill(0)
@@ -68,7 +67,6 @@ export const getLibraryStatistics = async (req: Request, res: Response, next: Ne
     try {
         const currentYear = new Date().getFullYear()
 
-        // Get borrowings and returns by month
         const borrowingsData = await LendingModel.aggregate([
             {
                 $match: {
@@ -135,7 +133,6 @@ export const getMonthlyBorrowingTarget = async (req: Request, res: Response, nex
         const currentMonth = currentDate.getMonth()
         const currentYear = currentDate.getFullYear()
 
-        // Get current month borrowings
         const currentMonthBorrowings = await LendingModel.countDocuments({
             borrowedDate: {
                 $gte: new Date(currentYear, currentMonth, 1),
@@ -143,17 +140,15 @@ export const getMonthlyBorrowingTarget = async (req: Request, res: Response, nex
             }
         })
 
-        // Set target based on total books (e.g., 50% of total books as monthly target)
         const totalBooks = await BookModel.countDocuments()
-        const monthlyTarget = Math.max(Math.floor(totalBooks * 0.5), 1) // Ensure target is at least 1
+        const monthlyTarget = Math.max(Math.floor(totalBooks * 0.5), 1)
 
-        // Calculate percentage properly - don't cap at 100%
         const percentage = monthlyTarget > 0 ? (currentMonthBorrowings / monthlyTarget) * 100 : 0
 
         res.json({
             current: currentMonthBorrowings,
             target: monthlyTarget,
-            percentage: Math.round(percentage * 100) / 100 // Round to 2 decimal places
+            percentage: Math.round(percentage * 100) / 100
         })
     } catch (error) {
         next(error)
@@ -197,7 +192,6 @@ export const getGenreStatistics = async (req: Request, res: Response, next: Next
     try {
         const genreStats = await BookModel.aggregate([
             {
-                // Unwind the genres array to create separate documents for each genre
                 $unwind: "$genres"
             },
             {

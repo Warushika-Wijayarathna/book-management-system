@@ -1,14 +1,13 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons"
+import { EyeCloseIcon, EyeIcon } from "../../icons"
 import Label from "../form/Label"
 import Input from "../form/input/InputField"
-import Checkbox from "../form/input/Checkbox"
 import Button from "../ui/button/Button"
-import { login } from "../../services/authService"
 import { useAuth } from "../../context/useAuth.tsx"
 import toast from "react-hot-toast"
-import axios from "axios"
+import apiClient from "../../services/apiClient"
+import axios from "axios";
 
 interface FormData {
   email: string
@@ -22,7 +21,6 @@ interface FormErrors {
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false)
-  const [isChecked, setIsChecked] = useState(false)
   const [formData, setFormData] = useState<FormData>({ email: "", password: "" })
   const [errors, setErrors] = useState<FormErrors>({})
   const [isLoading, setIsLoading] = useState(false)
@@ -49,44 +47,48 @@ export default function SignInForm() {
   }
 
   const handleSignIn = async (e: React.FormEvent) => {
+    console.log("handleSignIn called with formData:", formData)
     e.preventDefault()
     if (validateForm()) {
       setIsLoading(true)
       try {
-        const loginResponse = await login(formData)
-        toast.success(`Welcome, ${loginResponse.name}!`)
+        console.log("Submitting form data:", formData)
+        const loginResponse = await apiClient.post("/auth/login", formData)
+        console.log("Login response received:", loginResponse.data)
+        toast.success(`Welcome, ${loginResponse.data.name}!`)
 
         const userData = {
-          _id: loginResponse._id,
-          name: loginResponse.name,
-          email: loginResponse.email,
+          _id: loginResponse.data._id,
+          name: loginResponse.data.name,
+          email: loginResponse.data.email,
         }
 
-        authenticate(loginResponse.accessToken, userData)
+        console.log(
+          "Authenticating user with token and userData:",
+          loginResponse.data.accessToken,
+          userData
+        )
+        authenticate(loginResponse.data.accessToken, userData)
         navigate("/home")
       } catch (error) {
+        console.error("Error during login:", error)
         if (axios.isAxiosError(error)) {
+          console.error("Axios error response:", error.response)
           toast.error(error.response?.data?.message || error.message)
         } else {
           toast.error("Something went wrong")
         }
       } finally {
+        console.log("Resetting isLoading state to false")
         setIsLoading(false)
       }
+    } else {
+      console.log("Form validation failed with errors:", errors)
     }
   }
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="w-full max-w-md pt-10 mx-auto">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <ChevronLeftIcon className="size-5" />
-          Back to dashboard
-        </Link>
-      </div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -97,31 +99,6 @@ export default function SignInForm() {
               Enter your email and password to sign in!
             </p>
           </div>
-
-          {/* Third-party buttons */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
-              {/* Google Icon */}
-              Sign in with Google
-            </button>
-            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
-              {/* X Icon */}
-              Sign in with X
-            </button>
-          </div>
-
-          {/* OR Divider */}
-          <div className="relative py-3 sm:py-5">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2">
-                Or
-              </span>
-            </div>
-          </div>
-
           {/* Sign-in Form */}
           <form onSubmit={handleSignIn}>
             <div className="space-y-6">
@@ -171,22 +148,8 @@ export default function SignInForm() {
                   <p className="mt-1 text-sm text-red-500">{errors.password}</p>
                 )}
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Checkbox checked={isChecked} onChange={setIsChecked} />
-                  <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                    Keep me logged in
-                  </span>
-                </div>
-                <Link
-                  to="/reset-password"
-                  className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                >
-                  Forgot password?
-                </Link>
-              </div>
               <div>
-                <Button className="w-full" size="sm" disabled={isLoading}>
+                <Button className="w-full" size="sm" disabled={isLoading} type={"submit"}>
                   {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>

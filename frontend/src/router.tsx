@@ -5,7 +5,6 @@ import SignIn from "./pages/AuthPages/SignIn"
 import SignUp from "./pages/AuthPages/SignUp"
 import NotFound from "./pages/OtherPage/NotFound"
 import UserProfiles from "./pages/UserProfiles"
-import Blank from "./pages/Blank"
 import AdminRoutes from "./pages/AuthPages/AdminRoutes.tsx"
 import BookPage from "./pages/BookPage.tsx";
 import ReaderPage from "./pages/ReaderPage.tsx";
@@ -29,7 +28,6 @@ const router = createBrowserRouter([
       { path: "lend", element: <LendPage/>},
       { path: "home", element: <Home /> },
       { path: "profile", element: <UserProfiles /> },
-      { path: "blank", element: <Blank /> },
       { path: "*", element: <NotFound /> },
     ],
   },

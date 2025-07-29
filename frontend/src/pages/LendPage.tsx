@@ -13,6 +13,7 @@ import AddReaderForm from "../components/form/AddReaderForm";
 import CustomDialog from "../components/common/CustomDialog";
 import SearchBar from "../components/common/SearchBar";
 import LendingFilters from "../components/filters/LendingFilters";
+import { usePrompt } from "../hooks/usePrompt";
 
 export default function LendPage() {
   const { isLoggedIn, isAuthenticating } = useAuth();
@@ -57,6 +58,11 @@ export default function LendPage() {
   useEffect(() => {
     applyFilters();
   }, [searchTerm, lendings, activeFilters]);
+
+  const { showDialog: showNavigationDialog, message: navigationMessage, handleConfirm: handleNavigationConfirm, handleCancel: handleNavigationCancel } = usePrompt(
+    formOpen,
+    "You have unsaved changes. Are you sure you want to leave this page?"
+  );
 
   const applyFilters = () => {
     let filtered = lendings;
@@ -281,7 +287,10 @@ export default function LendPage() {
   };
 
   const isAddFormDirty = () => {
-    return !editingLendingId && (bookSearchValue || readerSearchValue || searchedBook || searchedReader);
+    return (
+        (!editingLendingId && (bookSearchValue || readerSearchValue || searchedBook || searchedReader)) ||
+        (editingLendingId && formData.status)
+    );
   };
 
   const handleSearch = (value: string) => {
@@ -330,6 +339,28 @@ export default function LendPage() {
       setIsNotifying(false);
     }
   };
+
+  const handleCloseForm = () => {
+    if (isAddFormDirty()) {
+      setShowCancelDialog(true);
+    } else {
+      setFormOpen(false);
+    }
+  };
+
+  const handleCancelForm = (confirm: boolean) => {
+    setShowCancelDialog(false);
+    if (!confirm) return;
+
+    setBookSearchValue("");
+    setReaderSearchValue("");
+    setSearchedBook(null);
+    setSearchedReader(null);
+    setFormData({});
+    setEditingLendingId(null);
+    setFormOpen(false);
+  };
+
 
   return (
     <div className="px-4 py-6">
@@ -462,20 +493,8 @@ export default function LendPage() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Lending Form</h2>
               <button
-                onClick={() => {
-                  setBookSearchValue("");
-                  setReaderSearchValue("");
-                  setSearchedBook(null);
-                  setSearchedReader(null);
-                  setFormData({});
-                  setEditingLendingId(null);
-                  if (!editingLendingId && isAddFormDirty()) {
-                    setShowCancelDialog(true);
-                  } else {
-                    setFormOpen(false);
-                  }
-                }}
-                className="text-gray-600"
+                  onClick={handleCloseForm}
+                  className="text-gray-600"
               >
                 ✕
               </button>
@@ -687,19 +706,7 @@ export default function LendPage() {
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => {
-                    setBookSearchValue("");
-                    setReaderSearchValue("");
-                    setSearchedBook(null);
-                    setSearchedReader(null);
-                    setFormData({});
-                    setEditingLendingId(null);
-                    if (!editingLendingId && isAddFormDirty()) {
-                      setShowCancelDialog(true);
-                    } else {
-                      setFormOpen(false);
-                    }
-                  }}
+                  onClick={handleCloseForm}
                   className="bg-gray-300 px-4 py-2 rounded"
                 >
                   Cancel
@@ -719,15 +726,7 @@ export default function LendPage() {
                   title="Discard Lending?"
                   message="You have unsaved changes. Do you want to discard and close the form?"
                   onCancel={() => setShowCancelDialog(false)}
-                  onConfirm={() => {
-                    setShowCancelDialog(false);
-                    setFormOpen(false);
-                    setBookSearchValue("");
-                    setReaderSearchValue("");
-                    setSearchedBook(null);
-                    setSearchedReader(null);
-                    setFormData({});
-                  }}
+                  onConfirm={handleCancelForm}
                   confirmText="Yes, Discard"
                   cancelText="No"
                 />
@@ -750,6 +749,18 @@ export default function LendPage() {
           }}
           confirmText="Add Reader"
           cancelText="Cancel"
+        />
+      )}
+
+      {/* Navigation prompt dialog */}
+      {showNavigationDialog && (
+        <CustomDialog
+          title="Unsaved Changes"
+          message={navigationMessage}
+          onCancel={handleNavigationCancel}
+          onConfirm={() => handleNavigationConfirm()}
+          confirmText="Leave Page"
+          cancelText="Stay"
         />
       )}
     </div>

@@ -1,21 +1,21 @@
 import React from "react";
 
 interface CustomDialogProps {
-    title: string;
-    message: string;
-    onConfirm: () => void;
-    onCancel: () => void;
-    confirmText?: string;
-    cancelText?: string;
+    title: string,
+    message: string,
+    onCancel: () => void,
+    confirmText?: string,
+    cancelText?: string,
+    onConfirm?: (confirm: boolean) => void
 }
 
 const CustomDialog: React.FC<CustomDialogProps> = ({
                                                        title,
                                                        message,
-                                                       onConfirm,
                                                        onCancel,
                                                        confirmText = "Yes",
                                                        cancelText = "No",
+                                                       onConfirm = () => {}
                                                    }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -30,7 +30,7 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
                         {cancelText}
                     </button>
                     <button
-                        onClick={onConfirm}
+                        onClick={() => onConfirm(true)}
                         className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                     >
                         {confirmText}

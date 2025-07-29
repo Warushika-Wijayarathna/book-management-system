@@ -4,7 +4,6 @@ import {authenticateToken} from "../middlewares/authenticateToken"
 
 export const overdueRouter = Router()
 
-// add authenticateToken middleware to all routes
 overdueRouter.use(authenticateToken)
 
 overdueRouter.get("/", getOverdueReaders)

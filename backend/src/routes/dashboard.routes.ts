@@ -11,7 +11,6 @@ import {
 
 const router = Router()
 
-// All dashboard routes require authentication
 router.use(authenticateToken)
 
 router.get("/metrics", getLibraryMetrics)

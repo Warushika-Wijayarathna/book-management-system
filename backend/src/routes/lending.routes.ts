@@ -10,7 +10,6 @@ import {authenticateToken} from "../middlewares/authenticateToken"
 
 const lendingRouter = Router()
 
-// add authenticateToken middleware to all routes
 lendingRouter.use(authenticateToken)
 
 lendingRouter.post("/", lendBook)

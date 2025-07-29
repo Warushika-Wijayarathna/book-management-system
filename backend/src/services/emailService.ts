@@ -44,7 +44,7 @@ export const sendOverdueNotification = async (readerId: string) => {
             service: "gmail",
             auth: {
                 user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS.replace(/\s/g, ''), // Remove any spaces from app password
+                pass: process.env.EMAIL_PASS.replace(/\s/g, ''),
             },
         })
 

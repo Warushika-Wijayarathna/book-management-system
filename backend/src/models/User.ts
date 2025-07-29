@@ -5,10 +5,12 @@ type User = {
     email: string
     password: string
     profilePicture?: string
+    avatarStyle?: string
     bio?: string
     phone?: string
     address?: string
     dateOfBirth?: Date
+    createdAt?: Date
     updatedAt?: Date
 }
 
@@ -39,6 +41,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
         trim: true
+    },
+    avatarStyle: {
+        type: String,
+        enum: ['initials', 'avataaars', 'personas'],
+        default: 'avataaars',
+        required: false
     },
     bio: {
         type: String,

@@ -60,7 +60,6 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => location.pathname === path;
   const isActive = useCallback(
     (path: string) => location.pathname === path,
     [location.pathname]
@@ -242,14 +241,14 @@ const AppSidebar: React.FC = () => {
                 src="/images/logo/logo.svg"
                 alt="Logo"
                 width={150}
-                height={40}
+                height={150}
               />
               <img
                 className="hidden dark:block"
                 src="/images/logo/logo-dark.svg"
                 alt="Logo"
                 width={150}
-                height={40}
+                height={150}
               />
             </>
           ) : (

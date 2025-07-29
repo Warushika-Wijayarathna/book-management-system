@@ -4,7 +4,6 @@ import {authenticateToken} from "../middlewares/authenticateToken"
 
 const readerRouter =  Router()
 
-// add authenticateToken middleware to all routes
 readerRouter.use(authenticateToken)
 
 readerRouter.post("/", createReader)

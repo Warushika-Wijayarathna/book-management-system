@@ -42,6 +42,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Logging in user...", req.body)
     try {
         const {email, password} = req.body
 

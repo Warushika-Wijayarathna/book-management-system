@@ -5,7 +5,7 @@ import { Avatar } from "../ui/Avatar"
 import Button from "../ui/button/Button"
 import Input from "../form/input/InputField"
 import Label from "../form/Label"
-import toast from "react-hot-toast"
+import { toast } from "react-toastify"
 import axios from "axios"
 
 interface ProfileFormData {
@@ -25,11 +25,11 @@ interface PasswordFormData {
 }
 
 export default function ProfilePage() {
-  const { user, updateUser, fetchUserProfile } = useAuth()
+  const { user, updateUser, fetchUserProfile, logout } = useAuth()
   const [activeTab, setActiveTab] = useState("profile")
   const [isLoading, setIsLoading] = useState(false)
   const [passwordLoading, setPasswordLoading] = useState(false)
-  
+
   const [profileData, setProfileData] = useState<ProfileFormData>({
     name: "",
     email: "",
@@ -49,6 +49,38 @@ export default function ProfilePage() {
   const [avatarStyle, setAvatarStyle] = useState<'initials' | 'avataaars' | 'personas'>('avataaars')
 
   useEffect(() => {
+    const storedUserData = localStorage.getItem("userData")
+    console.log("Raw localStorage userData:", storedUserData)
+    if (storedUserData) {
+      try {
+        const parsedUserData = JSON.parse(storedUserData)
+        console.log("Parsed localStorage userData:", parsedUserData)
+
+        if (!parsedUserData.email && user && user._id) {
+          console.log("Email missing from localStorage, forcing fresh fetch...")
+          fetchUserProfile().catch(error => {
+            console.log("Failed to fetch fresh profile data:", error)
+          })
+        }
+      } catch (error) {
+        console.error("Error parsing localStorage userData:", error)
+      }
+    }
+
+    const loadUserProfile = async () => {
+      if (user && user._id) {
+        try {
+          await fetchUserProfile()
+        } catch (error) {
+          console.log("Failed to fetch fresh profile data, using existing user data")
+        }
+      }
+    }
+
+    loadUserProfile()
+  }, [])
+
+  useEffect(() => {
     if (user) {
       setProfileData({
         name: user.name || "",
@@ -59,19 +91,46 @@ export default function ProfilePage() {
         dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : "",
         profilePicture: user.profilePicture || ""
       })
+      setAvatarStyle(user.avatarStyle as 'initials' | 'avataaars' | 'personas' || 'avataaars')
+    } else {
+      console.log("No user data available for form")
     }
   }, [user])
+
+  useEffect(() => {
+    if (user && (!profileData.name && !profileData.email)) {
+      setProfileData({
+        name: user.name || "",
+        email: user.email || "",
+        bio: user.bio || "",
+        phone: user.phone || "",
+        address: user.address || "",
+        dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : "",
+        profilePicture: user.profilePicture || ""
+      })
+    }
+  }, [])
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    
+
     try {
       const updatedUser = await updateProfile(profileData)
       updateUser(updatedUser)
+
+      setProfileData({
+        name: updatedUser.name || "",
+        email: updatedUser.email || "",
+        bio: updatedUser.bio || "",
+        phone: updatedUser.phone || "",
+        address: updatedUser.address || "",
+        dateOfBirth: updatedUser.dateOfBirth ? new Date(updatedUser.dateOfBirth).toISOString().split('T')[0] : "",
+        profilePicture: updatedUser.profilePicture || ""
+      })
+
       toast.success("Profile updated successfully!")
-      
-      // Refresh user data to ensure consistency
+
       await fetchUserProfile()
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -86,7 +145,7 @@ export default function ProfilePage() {
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       toast.error("New passwords don't match")
       return
@@ -98,19 +157,31 @@ export default function ProfilePage() {
     }
 
     setPasswordLoading(true)
-    
+
     try {
-      await changePassword({
+      const response = await changePassword({
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       })
-      
-      toast.success("Password changed successfully!")
+
+      console.log("Password change response:", response)
+      console.log("requiresReauth flag:", response.requiresReauth)
+
+      toast.success("Password changed successfully! Redirecting to sign in...")
       setPasswordData({
         currentPassword: "",
         newPassword: "",
         confirmPassword: ""
       })
+
+      if (response.requiresReauth) {
+        console.log("Redirecting user to sign in...")
+        setTimeout(() => {
+          logout()
+        }, 2000)
+      } else {
+        console.log("No requiresReauth flag found, not redirecting")
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "Failed to change password")
@@ -122,10 +193,34 @@ export default function ProfilePage() {
     }
   }
 
-  const generateNewAvatar = () => {
-    // Clear profile picture to force avatar regeneration
+  const generateNewAvatar = async () => {
+    if (!user) return
+
+    // Include all current profile data to avoid missing required fields
+    const updatedProfileData = {
+      ...profileData,
+      avatarStyle: avatarStyle,
+      profilePicture: "" // Clear profile picture to use generated avatar
+    }
+
+    // Update local state immediately for better UX
     setProfileData(prev => ({ ...prev, profilePicture: "" }))
-    toast.success("Avatar style updated!")
+
+    try {
+      const updatedUser = await updateProfile(updatedProfileData)
+      updateUser(updatedUser)
+
+      await fetchUserProfile()
+
+      toast.success(`Avatar style changed to ${avatarStyle}!`)
+    } catch (error) {
+      console.error("Failed to update avatar style:", error)
+      toast.error("Failed to update avatar style")
+    }
+  }
+
+  const handleAvatarStyleChange = (newStyle: 'initials' | 'avataaars' | 'personas') => {
+    setAvatarStyle(newStyle)
   }
 
   if (!user) {
@@ -138,6 +233,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
         {/* Header */}
         <div className="border-b border-gray-200 dark:border-gray-800 p-6">
@@ -252,7 +348,7 @@ export default function ProfilePage() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <Label>Bio</Label>
                 <textarea
@@ -309,7 +405,7 @@ export default function ProfilePage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label>New Password</Label>
                 <Input
@@ -356,7 +452,7 @@ export default function ProfilePage() {
                           ? "border-brand-500 bg-brand-50 dark:bg-brand-900/20"
                           : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
                       }`}
-                      onClick={() => setAvatarStyle(style)}
+                      onClick={() => handleAvatarStyleChange(style)}
                     >
                       <div className="flex flex-col items-center space-y-3">
                         <Avatar

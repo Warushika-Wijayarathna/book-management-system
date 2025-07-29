@@ -11,7 +11,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
             req.body,
             { new: true }
         )
-        await logAction("UPDATE", req.user?.id, "User", req.params.id)
+        await logAction("UPDATE", req.user?.userId, "User", req.params.id)
 
         if (!user) {
             throw new APIError(404, "User not found")
@@ -23,15 +23,15 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 }
 
 export const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Update Profile Request Body:", req.body, "User ID:", req.user?.userId)
     try {
-        const userId = req.user?.id
+        const userId = req.user?.userId
         if (!userId) {
             throw new APIError(401, "User not authenticated")
         }
 
-        const { name, email, bio, phone, address, dateOfBirth, profilePicture } = req.body
+        const { name, email, bio, phone, address, dateOfBirth, profilePicture, avatarStyle } = req.body
 
-        // Check if email is being changed and if it's already taken
         if (email) {
             const existingUser = await UserModel.findOne({ email, _id: { $ne: userId } })
             if (existingUser) {
@@ -47,6 +47,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
         if (address !== undefined) updateData.address = address
         if (dateOfBirth) updateData.dateOfBirth = new Date(dateOfBirth)
         if (profilePicture !== undefined) updateData.profilePicture = profilePicture
+        if (avatarStyle !== undefined) updateData.avatarStyle = avatarStyle
 
         const user = await UserModel.findByIdAndUpdate(
             userId,
@@ -65,6 +66,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
             name: user.name,
             email: user.email,
             profilePicture: user.profilePicture,
+            avatarStyle: user.avatarStyle,
             bio: user.bio,
             phone: user.phone,
             address: user.address,
@@ -77,8 +79,9 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
 }
 
 export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Change Password Request Body:", req.body, "User ID:", req.user?.userId)
     try {
-        const userId = req.user?.id
+        const userId = req.user?.userId
         if (!userId) {
             throw new APIError(401, "User not authenticated")
         }
@@ -94,22 +97,22 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
             throw new APIError(404, "User not found")
         }
 
-        // Verify current password
         const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password)
         if (!isCurrentPasswordValid) {
             throw new APIError(400, "Current password is incorrect")
         }
 
-        // Hash new password
         const SALT = 10
         const hashedNewPassword = await bcrypt.hash(newPassword, SALT)
 
-        // Update password
         await UserModel.findByIdAndUpdate(userId, { password: hashedNewPassword })
 
         await logAction("UPDATE", userId, "User", userId)
 
-        res.status(200).json({ message: "Password changed successfully" })
+        res.status(200).json({
+            message: "Password changed successfully. Please sign in again with your new password.",
+            requiresReauth: true
+        })
     } catch (error: any) {
         next(error)
     }
@@ -126,10 +129,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 
 export const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId = req.user?.id
-        if (!userId) {
-            throw new APIError(401, "User not authenticated")
-        }
+        const userId = req.user?.userId
 
         const user = await UserModel.findById(userId).select('-password')
         if (!user) {
@@ -141,6 +141,7 @@ export const getCurrentUser = async (req: Request, res: Response, next: NextFunc
             name: user.name,
             email: user.email,
             profilePicture: user.profilePicture,
+            avatarStyle: user.avatarStyle,
             bio: user.bio,
             phone: user.phone,
             address: user.address,

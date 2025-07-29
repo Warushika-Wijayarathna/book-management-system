@@ -4,7 +4,6 @@ import {getUser, updateUser, getCurrentUser, updateProfile, changePassword} from
 
 export const userRouter = Router()
 
-// add authenticateToken middleware to all routes
 userRouter.use(authenticateToken)
 
 userRouter.get("/", getUser)
