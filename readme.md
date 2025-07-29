@@ -35,6 +35,30 @@ A comprehensive full-stack book management system built with React, TypeScript, 
 - Overdue book alerts
 - System notifications
 
+## 🖼️ Screenshots
+
+Here are some screenshots showcasing the key features of the Book Management System:
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+*Main dashboard with real-time statistics, charts, and system overview*
+
+### Book Management
+![Book Management](screenshots/book.png)
+*Book catalog with search, filter, and CRUD operations*
+
+### Lending System
+![Lending System](screenshots/lending.png)
+*Lending management interface for borrowing and returning books*
+
+### Reader Management
+![Reader Management](screenshots/reader.png)
+*Reader registration and management interface*
+
+### User Profile
+![User Profile](screenshots/profile.png)
+*User profile management and settings*
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -248,6 +272,12 @@ book-management-system-(react)/
 │       ├── bookclub.lendings.json
 │       ├── bookclub.readers.json
 │       └── bookclub.users.json
+├── screenshots/                # Application screenshots
+│   ├── book.png               # Book management interface
+│   ├── dashboard.png          # Main dashboard view
+│   ├── lending.png            # Lending system interface
+│   ├── profile.png            # User profile page
+│   └── reader.png             # Reader management page
 └── README.md
 ```
 
