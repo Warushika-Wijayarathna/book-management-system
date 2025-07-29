@@ -135,10 +135,14 @@ npm install
 
 Create a `.env` file in the backend directory:
 ```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/book-management
-JWT_SECRET=your-jwt-secret-key
-EMAIL_FROM=your-email@domain.com
+mongodb+srv://your-username:your-password@your-cluster.mongodb.net/bookclub
+PORT=3000
+CLIENT_ORIGIN=http://localhost:5173
+ACCESS_TOKEN_SECRET=your-access-token-secret-key-here
+REFRESH_TOKEN_SECRET=your-refresh-token-secret-key-here
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-email-app-password
+EMAIL_FROM=your-app-email@gmail.com
 ```
 
 Start the backend server:
