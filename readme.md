@@ -67,6 +67,34 @@ Before running this application, make sure you have the following installed:
 - MongoDB
 - Git
 
+## 💾 Database Setup
+
+This project uses MongoDB as the database. The `database/book-club/` directory contains sample JSON files that can be imported into your MongoDB instance:
+
+- `bookclub.auditlogs.json` - Audit logs for tracking system activities
+- `bookclub.books.json` - Sample book records
+- `bookclub.lendings.json` - Lending transaction records
+- `bookclub.readers.json` - Reader/member information
+- `bookclub.users.json` - User accounts and authentication data
+
+### Importing Sample Data (Optional)
+
+To import the sample data into your MongoDB database:
+
+```bash
+# Navigate to the database directory
+cd database/book-club
+
+# Import each collection (replace 'book-management' with your database name)
+mongoimport --db book-management --collection auditlogs --file bookclub.auditlogs.json --jsonArray
+mongoimport --db book-management --collection books --file bookclub.books.json --jsonArray
+mongoimport --db book-management --collection lendings --file bookclub.lendings.json --jsonArray
+mongoimport --db book-management --collection readers --file bookclub.readers.json --jsonArray
+mongoimport --db book-management --collection users --file bookclub.users.json --jsonArray
+```
+
+**Note:** Ensure your MongoDB service is running before importing the data.
+
 ## ⚡ Quick Start
 
 ### 1. Clone the repository
@@ -121,27 +149,105 @@ book-management-system-(react)/
 ├── backend/                    # Backend API server
 │   ├── src/
 │   │   ├── controllers/        # Route controllers
+│   │   │   ├── audit.controller.ts
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── book.controller.ts
+│   │   │   ├── dashboard.controller.ts
+│   │   │   ├── lending.controller.ts
+│   │   │   ├── notification.controller.ts
+│   │   │   ├── overdue.controller.ts
+│   │   │   ├── reader.controller.ts
+│   │   │   └── user.controller.ts
 │   │   ├── models/            # MongoDB models
+│   │   │   ├── AuditLog.ts
+│   │   │   ├── Book.ts
+│   │   │   ├── Lending.ts
+│   │   │   ├── Reader.ts
+│   │   │   └── User.ts
 │   │   ├── routes/            # API routes
+│   │   │   ├── audit.routes.ts
+│   │   │   ├── auth.routes.ts
+│   │   │   ├── book.routes.ts
+│   │   │   ├── dashboard.routes.ts
+│   │   │   ├── lending.routes.ts
+│   │   │   ├── notification.routes.ts
+│   │   │   ├── overdue.routes.ts
+│   │   │   ├── reader.routes.ts
+│   │   │   ├── user.routes.ts
+│   │   │   └── index.ts
 │   │   ├── middlewares/       # Custom middlewares
+│   │   │   ├── authenticateToken.ts
+│   │   │   └── errorHandler.ts
 │   │   ├── services/          # Business logic services
+│   │   │   ├── auditLogger.ts
+│   │   │   └── emailService.ts
 │   │   ├── db/               # Database configuration
-│   │   └── errors/           # Error handling
+│   │   │   └── mongo.ts
+│   │   ├── errors/           # Error handling
+│   │   │   └── APIError.ts
+│   │   └── app.ts            # Main application file
 │   ├── package.json
-│   └── tsconfig.json
+│   ├── tsconfig.json
+│   └── nodemon.json
 ├── frontend/                   # React frontend
 │   ├── src/
 │   │   ├── components/        # Reusable UI components
+│   │   │   ├── auth/         # Authentication components
+│   │   │   ├── common/       # Common UI components
+│   │   │   ├── filters/      # Filter components
+│   │   │   ├── form/         # Form components
+│   │   │   ├── header/       # Header components
+│   │   │   ├── homeStatistic/ # Statistics components
+│   │   │   ├── tables/       # Table components
+│   │   │   ├── ui/           # Basic UI components
+│   │   │   └── UserProfile/  # User profile components
 │   │   ├── pages/            # Application pages
+│   │   │   ├── AuthPages/    # Authentication pages
+│   │   │   ├── Dashboard/    # Dashboard pages
+│   │   │   ├── OtherPage/    # Other pages
+│   │   │   ├── BookPage.tsx
+│   │   │   ├── LendPage.tsx
+│   │   │   ├── ReaderPage.tsx
+│   │   │   └── UserProfiles.tsx
 │   │   ├── context/          # React context providers
+│   │   │   ├── AuthContext.tsx
+│   │   │   ├── AuthProvider.tsx
+│   │   │   ├── ModalContext.tsx
+│   │   │   ├── SidebarContext.tsx
+│   │   │   └── useAuth.tsx
 │   │   ├── hooks/            # Custom React hooks
+│   │   │   ├── useGoBack.ts
+│   │   │   ├── useModal.ts
+│   │   │   └── usePrompt.ts
 │   │   ├── services/         # API service functions
 │   │   ├── types/            # TypeScript type definitions
 │   │   ├── layout/           # Layout components
-│   │   └── icons/            # SVG icons
+│   │   ├── icons/            # SVG icons and assets
+│   │   ├── App.tsx           # Main App component
+│   │   ├── main.tsx          # Application entry point
+│   │   ├── router.tsx        # Application routing
+│   │   ├── index.css         # Global styles
+│   │   ├── svg.d.ts          # SVG type definitions
+│   │   └── vite-env.d.ts     # Vite environment types
 │   ├── public/               # Static assets
+│   │   ├── images/           # Image assets
+│   │   │   ├── logo/         # Logo files
+│   │   │   └── favicon.ico
+│   │   └── favicon.png
 │   ├── package.json
-│   └── vite.config.ts
+│   ├── vite.config.ts
+│   ├── tsconfig.json
+│   ├── tsconfig.app.json
+│   ├── tsconfig.node.json
+│   ├── postcss.config.js
+│   └── index.html
+├── database/                   # Database files
+│   └── book-club/             # MongoDB JSON exports
+│       ├── bookclub.auditlogs.json
+│       ├── bookclub.books.json
+│       ├── bookclub.lendings.json
+│       ├── bookclub.readers.json
+│       └── bookclub.users.json
 └── README.md
 ```
 

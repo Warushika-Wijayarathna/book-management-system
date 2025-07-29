@@ -1,0 +1,59 @@
+[{
+  "_id": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "name": "Ashani Wijayarathna",
+  "email": "www.thilankathushani@gmail.com",
+  "password": "$2b$10$qGNZI5Z8T8xH07yaQPZ5d.JulHLL4hprAZy4Z6zpzOWjpMQJR2FHu",
+  "__v": 0,
+  "address": "No.200, Prathiraja Mawatha, Weligampitiya, Pokunuwita",
+  "bio": "ecycy",
+  "phone": "0716930517",
+  "profilePicture": "",
+  "updatedAt": {
+    "$date": "2025-07-29T08:42:56.658Z"
+  },
+  "dateOfBirth": {
+    "$date": "2025-02-11T00:00:00.000Z"
+  },
+  "avatarStyle": "avataaars"
+},
+{
+  "_id": {
+    "$oid": "687e43661f07fe7770b62c75"
+  },
+  "name": "Ashani Wijayarathna",
+  "email": "www.thilankathushan2i@gmail.com",
+  "password": "$2b$10$eFefHLKrxVFLeIumOH9rYehoAR7S23zvJpvul9RhwAuH.DoH4iyJW",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881bffcf478867a3634445"
+  },
+  "name": "Ashani Wijayarathna",
+  "email": "www.thilankathushani12@gmail.com",
+  "password": "$2b$10$Okb4BusgePE6TtysbnGq2u7Hr5DZWSy1WQDKNS5M6jd8mf/TJZzNq",
+  "createdAt": {
+    "$date": "2025-07-29T00:55:27.534Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-29T00:55:27.534Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6888209ca5baf4b47b1bfa2b"
+  },
+  "name": "Ashani Wijayarathna",
+  "email": "www.thilankathushani3@gmail.com",
+  "password": "$2b$10$esw3N5XzbmCsBX9v5F5c3O6MzsQglu367O7YiolDrxoAlZh1c4kI6",
+  "createdAt": {
+    "$date": "2025-07-29T01:15:08.091Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-29T01:15:08.091Z"
+  },
+  "__v": 0
+}]

@@ -1,0 +1,24 @@
+[{
+  "_id": {
+    "$oid": "68876b415f48b3cb59a754c8"
+  },
+  "name": "Ashani Warushika",
+  "email": "warushikawijayarathna@gmail.com",
+  "contactNumber": "0716930518",
+  "address": "No. 380, Ranpokunagama, Welikala, Pokunuwita",
+  "createdAt": {
+    "$date": "2025-07-26T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68876b415f48b3cb59a754c9"
+  },
+  "name": "Nimal Perera",
+  "email": "nimalp@gmail.com",
+  "contactNumber": "0771122334",
+  "address": "45/B, Colombo Road, Galle",
+  "createdAt": {
+    "$date": "2025-07-27T00:00:00.000Z"
+  }
+}]

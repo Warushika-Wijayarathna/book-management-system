@@ -1,0 +1,39 @@
+[{
+  "_id": {
+    "$oid": "68876b075f48b3cb59a754c4"
+  },
+  "title": "The Great Adventure",
+  "author": "J. R. Silva",
+  "isbn": "978-1234567890",
+  "publishedYear": 2023,
+  "genres": [
+    "Adventure",
+    "Fiction",
+    "Fantasy"
+  ],
+  "totalCopies": 10,
+  "availableCopies": 10,
+  "addedDate": {
+    "$date": "2025-07-26T18:15:01.454Z"
+  },
+  "imageUrl": "https://firebasestorage.googleapis.com/v0/b/printerest-clone-773aa.appspot.com/o/books%2F1753708602743_download%20(9).jpeg?alt=media&token=68abdf19-25a7-4a2d-a364-cd7bc2566b3a"
+},
+{
+  "_id": {
+    "$oid": "68876b075f48b3cb59a754c5"
+  },
+  "title": "Little Explorers",
+  "author": "K. N. Fernando",
+  "isbn": "978-0987654321",
+  "publishedYear": 2022,
+  "genres": [
+    "Kids",
+    "Educational"
+  ],
+  "totalCopies": 5,
+  "availableCopies": 4,
+  "addedDate": {
+    "$date": "2025-07-27T17:06:45.294Z"
+  },
+  "imageUrl": "https://firebasestorage.googleapis.com/v0/b/printerest-clone-773aa.appspot.com/o/books%2F1753708616863_download%20(10).jpeg?alt=media&token=770f3328-b5c6-4b86-b21a-b380fcc8d182"
+}]

@@ -1,0 +1,578 @@
+[{
+  "_id": {
+    "$oid": "68876b72b86a91a806dd0ad0"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Book",
+  "targetId": {
+    "$oid": "68876b075f48b3cb59a754c4"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T12:22:10.483Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68876b7eb86a91a806dd0ad5"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Book",
+  "targetId": {
+    "$oid": "68876b075f48b3cb59a754c5"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T12:22:22.956Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "688776eab215cb2be74b483c"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Book",
+  "targetId": {
+    "$oid": "68876b075f48b3cb59a754c4"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T13:11:06.464Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6887783ea76f7b007847a0c6"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Book",
+  "targetId": {
+    "$oid": "68876b075f48b3cb59a754c4"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T13:16:46.227Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6887784ba76f7b007847a0cb"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Book",
+  "targetId": {
+    "$oid": "68876b075f48b3cb59a754c5"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T13:16:59.210Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68879f080cb0f019c91876c3"
+  },
+  "action": "RETURN",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Lending",
+  "targetId": {
+    "$oid": "68876b585f48b3cb59a754cc"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T16:02:16.829Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68879f160cb0f019c91876cc"
+  },
+  "action": "RETURN",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Lending",
+  "targetId": {
+    "$oid": "68876b585f48b3cb59a754ce"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T16:02:30.612Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6887a2020cb0f019c91876e1"
+  },
+  "action": "RETURN",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Lending",
+  "targetId": {
+    "$oid": "68876b585f48b3cb59a754ce"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T16:14:58.559Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6887ec9314ac60918674abb0"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Reader",
+  "targetId": {
+    "$oid": "68876b415f48b3cb59a754c8"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T21:33:07.854Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6887fa5381243593e7395e74"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "Book",
+  "targetId": {
+    "$oid": "68876b075f48b3cb59a754c4"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T22:31:47.504Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "688809b84f0da8ec0baeddba"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T23:37:28.815Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68880a184f0da8ec0baeddf4"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T23:39:04.837Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68880a3b4f0da8ec0baede13"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T23:39:39.824Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68880a424f0da8ec0baede16"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T23:39:46.104Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68880aaf120f51c4c95c2251"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T23:41:35.985Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68880b74120f51c4c95c2270"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-28T23:44:52.792Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881098ac74c676764a5565"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:06:48.864Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "688810d0ac74c676764a556b"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:07:44.259Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881699cf478867a36343e9"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:32:25.278Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881730cf478867a36343ee"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:34:56.687Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881778cf478867a363440e"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:36:08.886Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881781cf478867a3634412"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:36:17.163Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881791cf478867a3634416"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:36:33.871Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881793cf478867a363441a"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:36:35.185Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "688817d3cf478867a363441f"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:37:39.207Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68881897cf478867a3634442"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T00:40:55.681Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "688847e7cc49a5cf93e07678"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T04:02:47.713Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "688885b8bd02a5d49d9ad7c8"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T08:26:32.294Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6888865cbd02a5d49d9ad812"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T08:29:16.028Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6888881024b2d3f10850a1eb"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T08:36:32.253Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6888881124b2d3f10850a1f0"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T08:36:33.584Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6888881424b2d3f10850a1f5"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T08:36:36.659Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6888895724b2d3f10850a20e"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T08:41:59.314Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6888899024b2d3f10850a213"
+  },
+  "action": "UPDATE",
+  "performedBy": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "targetModel": "User",
+  "targetId": {
+    "$oid": "687e42801f07fe7770b62c73"
+  },
+  "timestamp": {
+    "$date": "2025-07-29T08:42:56.862Z"
+  },
+  "__v": 0
+}]
