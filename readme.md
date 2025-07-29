@@ -57,7 +57,6 @@ A comprehensive full-stack book management system built with React, TypeScript, 
 - **Mongoose** - ODM for MongoDB
 - **JWT** - Authentication
 - **bcrypt** - Password hashing
-- **SendGrid** - Email service
 - **Nodemailer** - Email handling
 
 ## 📋 Prerequisites
