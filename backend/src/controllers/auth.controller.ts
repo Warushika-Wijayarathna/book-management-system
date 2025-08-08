@@ -20,6 +20,10 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
     try{
         const { name, email, password } = req.body
 
+        if (!email || !email.toLowerCase().endsWith('@bookclub.com')) {
+            throw new APIError(401, "Unauthorized user email")
+        }
+
         const SALT = 10
         const hashedPassword = await bcrypt.hash(password, SALT)
         const user = new UserModel({

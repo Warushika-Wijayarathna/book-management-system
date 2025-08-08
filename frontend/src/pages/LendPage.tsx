@@ -683,21 +683,37 @@ export default function LendPage() {
                       <label className="block mb-1 font-medium">Lend Date</label>
                       <input
                         type="date"
-                        value={formData?.lendDate || ""}
-                        onChange={(e) => setFormData({ ...formData, lendDate: e.target.value })}
+                        value={formData?.lendDate || new Date().toISOString().split('T')[0]}
+                        onChange={(e) => {
+                          const lendDate = e.target.value;
+                          const dueDate = new Date(lendDate);
+                          dueDate.setDate(dueDate.getDate() + 14);
+                          setFormData({
+                            ...formData,
+                            lendDate,
+                            dueDate: dueDate.toISOString().split('T')[0]
+                          });
+                        }}
                         className="w-full border px-4 py-2 rounded"
                         required
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="block mb-1 font-medium">Due Date</label>
+                      <label className="block mb-1 font-medium">Due Date (Auto-calculated)</label>
                       <input
                         type="date"
-                        value={formData?.dueDate || ""}
-                        onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                        className="w-full border px-4 py-2 rounded"
-                        required
+                        value={formData?.dueDate || (() => {
+                          const today = new Date();
+                          today.setDate(today.getDate() + 14);
+                          return today.toISOString().split('T')[0];
+                        })()}
+                        className="w-full border px-4 py-2 rounded bg-gray-100 cursor-not-allowed"
+                        readOnly
+                        disabled
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Due date is automatically set to 14 days from lend date
+                      </p>
                     </div>
                   </div>
                 </>

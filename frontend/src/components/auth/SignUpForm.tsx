@@ -25,6 +25,12 @@ export default function SignUpForm() {
       setError("All fields are required.");
       return;
     }
+
+    if (!email.toLowerCase().endsWith('@bookclub.com')) {
+      setError("unauthorized email.");
+      return;
+    }
+
     setLoading(true);
     try {
       const name = `${fname} ${lname}`;
