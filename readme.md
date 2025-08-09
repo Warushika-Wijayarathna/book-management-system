@@ -14,7 +14,6 @@ A comprehensive full-stack book management system built with React, TypeScript, 
 
 ### 👥 User Management
 - User authentication and authorization
-- Role-based access control (Admin/Librarian/Member)
 - User profiles and preferences
 - Reader registration and management
 
