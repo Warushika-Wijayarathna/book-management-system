@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { useAuth } from "../../context/useAuth";
@@ -7,14 +7,26 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   if (!user) {
     return (
       <div className="flex items-center animate-pulse">
-        <div className="w-11 h-11 bg-gray-200 rounded-full mr-3 dark:bg-gray-700"></div>
-        <div className="w-20 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+        <div className="w-8 h-8 sm:w-11 sm:h-11 bg-gray-200 rounded-full mr-2 sm:mr-3 dark:bg-gray-700"></div>
+        <div className="w-16 sm:w-20 h-4 bg-gray-200 rounded dark:bg-gray-700 hidden sm:block"></div>
       </div>
     );
   }
@@ -37,27 +49,28 @@ export default function UserDropdown() {
     <div className="relative">
       <button
         onClick={toggleDropdown}
-        className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
+        className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400 p-1 sm:p-0"
       >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
+        <span className="mr-2 sm:mr-3 overflow-hidden rounded-full h-8 w-8 sm:h-11 sm:w-11">
           <Avatar
             name={user.name}
             email={user.email}
             src={user.profilePicture}
-            size={44}
-            style={(user.avatarStyle as 'initials' | 'avataaars' | 'personas') || "avataaars"}
+            size={isMobile ? 32 : 44}
+            style={
+              (user.avatarStyle as "initials" | "avataaars" | "personas") ||
+              "avataaars"
+            }
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">
+        <span className="hidden sm:block mr-1 font-medium text-theme-sm">
           {user.name.split(" ")[0]}
         </span>
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
+          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 w-4 h-4 sm:w-[18px] sm:h-[20px] ${
             isOpen ? "rotate-180" : ""
           }`}
-          width="18"
-          height="20"
           viewBox="0 0 18 20"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -75,13 +88,13 @@ export default function UserDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+        className="absolute right-0 mt-2 sm:mt-[17px] flex w-[280px] sm:w-[260px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
-        <div>
-          <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
+        <div className="px-1">
+          <span className="block font-medium text-gray-700 text-sm sm:text-theme-sm dark:text-gray-400 truncate">
             {user.name}
           </span>
-          <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
+          <span className="mt-0.5 block text-xs sm:text-theme-xs text-gray-500 dark:text-gray-400 truncate">
             {user.email}
           </span>
         </div>
@@ -92,12 +105,10 @@ export default function UserDropdown() {
               onItemClick={closeDropdown}
               tag="a"
               to="/profile"
-              className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              className="flex items-center gap-3 px-3 py-3 sm:py-2 font-medium text-gray-700 rounded-lg group text-sm sm:text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 touch-manipulation"
             >
               <svg
-                className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
-                width="24"
-                height="24"
+                className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -109,18 +120,16 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Edit profile
+              <span className="truncate">Edit profile</span>
             </DropdownItem>
           </li>
         </ul>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+          className="flex items-center gap-3 px-3 py-3 sm:py-2 mt-3 font-medium text-gray-700 rounded-lg group text-sm sm:text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 touch-manipulation w-full text-left"
         >
           <svg
-            className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
-            width="24"
-            height="24"
+            className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -132,7 +141,7 @@ export default function UserDropdown() {
               fill=""
             />
           </svg>
-          Sign out
+          <span className="truncate">Sign out</span>
         </button>
       </Dropdown>
     </div>
