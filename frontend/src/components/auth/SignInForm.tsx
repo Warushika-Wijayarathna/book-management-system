@@ -88,85 +88,90 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
-        <div>
-          <div className="mb-5 sm:mb-8">
-            <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Sign In
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your email and password to sign in!
-            </p>
-          </div>
-          {/* Sign-in Form */}
-          <form onSubmit={handleSignIn}>
-            <div className="space-y-6">
-              <div>
-                <Label>
-                  Email <span className="text-error-500">*</span>
-                </Label>
+    <div className="flex flex-col flex-1 w-full">
+      <div className="w-full">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="mb-2 font-semibold text-gray-800 text-2xl sm:text-title-sm dark:text-white/90 lg:text-title-md">
+            Sign In
+          </h1>
+          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
+            Enter your email and password to sign in!
+          </p>
+        </div>
+        {/* Sign-in Form */}
+        <form onSubmit={handleSignIn} className="space-y-5 sm:space-y-6">
+          <div className="space-y-5 sm:space-y-6">
+            <div>
+              <Label>
+                Email <span className="text-error-500">*</span>
+              </Label>
+              <Input
+                name="email"
+                type="email"
+                placeholder="info@gmail.com"
+                value={formData.email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="mt-1"
+              />
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-500">{errors.email}</p>
+              )}
+            </div>
+            <div>
+              <Label>
+                Password <span className="text-error-500">*</span>
+              </Label>
+              <div className="relative mt-1">
                 <Input
-                  name="email"
-                  type="email"
-                  placeholder="info@gmail.com"
-                  value={formData.email}
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={formData.password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setFormData({ ...formData, email: e.target.value })
+                    setFormData({ ...formData, password: e.target.value })
                   }
                 />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute z-30 -translate-y-1/2 cursor-pointer right-3 sm:right-4 top-1/2 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                  ) : (
+                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                  )}
+                </button>
               </div>
-              <div>
-                <Label>
-                  Password <span className="text-error-500">*</span>
-                </Label>
-                <div className="relative">
-                  <Input
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                  />
-                  <span
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                  >
-                    {showPassword ? (
-                      <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    ) : (
-                      <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    )}
-                  </span>
-                </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-                )}
-              </div>
-              <div>
-                <Button className="w-full" size="sm" disabled={isLoading} type={"submit"}>
-                  {isLoading ? "Signing in..." : "Sign in"}
-                </Button>
-              </div>
+              {errors.password && (
+                <p className="mt-2 text-sm text-red-500">{errors.password}</p>
+              )}
             </div>
-          </form>
-
-          <div className="mt-5">
-            <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-              Don&apos;t have an account?{" "}
-              <Link
-                to="/signup"
-                className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            <div>
+              <Button
+                className="w-full py-3 sm:py-2.5"
+                size="sm"
+                disabled={isLoading}
+                type={"submit"}
               >
-                Sign Up
-              </Link>
-            </p>
+                {isLoading ? "Signing in..." : "Sign in"}
+              </Button>
+            </div>
           </div>
+        </form>
+
+        <div className="mt-6 sm:mt-5">
+          <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
+            Don&apos;t have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-brand-500 hover:text-brand-600 dark:text-brand-400 font-medium transition-colors"
+            >
+              Sign Up
+            </Link>
+          </p>
         </div>
       </div>
     </div>
